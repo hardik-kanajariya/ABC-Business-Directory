@@ -191,7 +191,7 @@
                             <div class="flex flex-col items-center justify-center h-auto my-auto">
                                 <div class="p-2 flex flex-col items-center justify-center m-auto">
                                     <h3 class="text-base md:text-lg font-bold text-justify text-indigo-900 mb-2">{{ $company->name }}</h3>
-                                    <p class="text-red-700 text-center text-xs md:text-sm">{{ $company->address->country->name }}</p>
+                                    <p class="text-red-700 text-center text-xs md:text-sm">{{ $company->address?->country?->name }}</p>
                                     <h2 class="text-sm md:text-base bold italic underline text-indigo-700 mt-2">Deals
                                         In</h2>
                                     @php
@@ -236,8 +236,8 @@
                                     @endif
                                 </li>
                                 <li class="text-sm md:text-base text-gray-500">
-                                    <i class='bx bx-been-here text-red-500'></i> {{$company->address->state->name}}
-                                    , {{$company->address->country->name}}
+                                    <i class='bx bx-been-here text-red-500'></i> {{$company->address?->state?->name}}
+                                    , {{$company->address?->country?->name}}
                                 </li>
                                 <li class="w-full flex items-center">
                                     <button class="inline-flex items-center mr-1 text-gray-500">
