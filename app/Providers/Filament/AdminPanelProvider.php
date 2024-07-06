@@ -60,8 +60,7 @@ class AdminPanelProvider extends PanelProvider
                     ->setIcon('heroicon-o-cog')
                     ->setNavigationGroup('Settings')
                     ->setTitle('General Settings')
-                    ->setNavigationLabel('General Settings'),
-                \Mvenghaus\FilamentScheduleMonitor\FilamentPlugin::make()
+                    ->setNavigationLabel('General Settings')
             ])
             ->widgets([
                 StatsOverview::class,

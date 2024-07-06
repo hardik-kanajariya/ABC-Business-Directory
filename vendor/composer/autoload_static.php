@@ -119,8 +119,6 @@ class ComposerStaticInitac121959cb4896372d230dcf7b824d43
             'Symfony\\Component\\Console\\' => 26,
             'Spatie\\TemporaryDirectory\\' => 26,
             'Spatie\\Sitemap\\' => 15,
-            'Spatie\\ScheduleMonitor\\Database\\Factories\\' => 42,
-            'Spatie\\ScheduleMonitor\\' => 23,
             'Spatie\\Robots\\' => 14,
             'Spatie\\MediaLibrary\\' => 20,
             'Spatie\\LaravelPackageTools\\' => 27,
@@ -182,7 +180,6 @@ class ComposerStaticInitac121959cb4896372d230dcf7b824d43
         ),
         'L' => 
         array (
-            'Lorisleiva\\CronTranslator\\' => 26,
             'Livewire\\' => 9,
             'League\\Uri\\' => 11,
             'League\\MimeTypeDetection\\' => 25,
@@ -465,14 +462,6 @@ class ComposerStaticInitac121959cb4896372d230dcf7b824d43
         array (
             0 => __DIR__ . '/..' . '/spatie/laravel-sitemap/src',
         ),
-        'Spatie\\ScheduleMonitor\\Database\\Factories\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/database/factories',
-        ),
-        'Spatie\\ScheduleMonitor\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src',
-        ),
         'Spatie\\Robots\\' => 
         array (
             0 => __DIR__ . '/..' . '/spatie/robots-txt/src',
@@ -647,10 +636,6 @@ class ComposerStaticInitac121959cb4896372d230dcf7b824d43
         'Masterminds\\' => 
         array (
             0 => __DIR__ . '/..' . '/masterminds/html5/src',
-        ),
-        'Lorisleiva\\CronTranslator\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/lorisleiva/cron-translator/src',
         ),
         'Livewire\\' => 
         array (
@@ -6036,18 +6021,6 @@ class ComposerStaticInitac121959cb4896372d230dcf7b824d43
         'Livewire\\WithPagination' => __DIR__ . '/..' . '/livewire/livewire/src/WithPagination.php',
         'Livewire\\WithoutUrlPagination' => __DIR__ . '/..' . '/livewire/livewire/src/WithoutUrlPagination.php',
         'Livewire\\Wrapped' => __DIR__ . '/..' . '/livewire/livewire/src/Wrapped.php',
-        'Lorisleiva\\CronTranslator\\CronExpression' => __DIR__ . '/..' . '/lorisleiva/cron-translator/src/CronExpression.php',
-        'Lorisleiva\\CronTranslator\\CronParsingException' => __DIR__ . '/..' . '/lorisleiva/cron-translator/src/CronParsingException.php',
-        'Lorisleiva\\CronTranslator\\CronTranslator' => __DIR__ . '/..' . '/lorisleiva/cron-translator/src/CronTranslator.php',
-        'Lorisleiva\\CronTranslator\\CronType' => __DIR__ . '/..' . '/lorisleiva/cron-translator/src/CronType.php',
-        'Lorisleiva\\CronTranslator\\DaysOfMonthField' => __DIR__ . '/..' . '/lorisleiva/cron-translator/src/DaysOfMonthField.php',
-        'Lorisleiva\\CronTranslator\\DaysOfWeekField' => __DIR__ . '/..' . '/lorisleiva/cron-translator/src/DaysOfWeekField.php',
-        'Lorisleiva\\CronTranslator\\Field' => __DIR__ . '/..' . '/lorisleiva/cron-translator/src/Field.php',
-        'Lorisleiva\\CronTranslator\\HoursField' => __DIR__ . '/..' . '/lorisleiva/cron-translator/src/HoursField.php',
-        'Lorisleiva\\CronTranslator\\LanguageLoader' => __DIR__ . '/..' . '/lorisleiva/cron-translator/src/LanguageLoader.php',
-        'Lorisleiva\\CronTranslator\\MinutesField' => __DIR__ . '/..' . '/lorisleiva/cron-translator/src/MinutesField.php',
-        'Lorisleiva\\CronTranslator\\MonthsField' => __DIR__ . '/..' . '/lorisleiva/cron-translator/src/MonthsField.php',
-        'Lorisleiva\\CronTranslator\\TranslationFileMissingException' => __DIR__ . '/..' . '/lorisleiva/cron-translator/src/TranslationFileMissingException.php',
         'Masterminds\\HTML5' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5.php',
         'Masterminds\\HTML5\\Elements' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Elements.php',
         'Masterminds\\HTML5\\Entities' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Entities.php',
@@ -8956,31 +8929,6 @@ class ComposerStaticInitac121959cb4896372d230dcf7b824d43
         'Spatie\\Robots\\RobotsHeaders' => __DIR__ . '/..' . '/spatie/robots-txt/src/RobotsHeaders.php',
         'Spatie\\Robots\\RobotsMeta' => __DIR__ . '/..' . '/spatie/robots-txt/src/RobotsMeta.php',
         'Spatie\\Robots\\RobotsTxt' => __DIR__ . '/..' . '/spatie/robots-txt/src/RobotsTxt.php',
-        'Spatie\\ScheduleMonitor\\Commands\\ListCommand' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Commands/ListCommand.php',
-        'Spatie\\ScheduleMonitor\\Commands\\SyncCommand' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Commands/SyncCommand.php',
-        'Spatie\\ScheduleMonitor\\Commands\\VerifyCommand' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Commands/VerifyCommand.php',
-        'Spatie\\ScheduleMonitor\\Database\\Factories\\MonitoredScheduledTaskFactory' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/database/factories/MonitoredScheduledTaskFactory.php',
-        'Spatie\\ScheduleMonitor\\Database\\Factories\\MonitoredScheduledTaskLogItemFactory' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/database/factories/MonitoredScheduledTaskLogItemFactory.php',
-        'Spatie\\ScheduleMonitor\\EventHandlers\\BackgroundCommandListener' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/EventHandlers/BackgroundCommandListener.php',
-        'Spatie\\ScheduleMonitor\\EventHandlers\\ScheduledTaskEventSubscriber' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/EventHandlers/ScheduledTaskEventSubscriber.php',
-        'Spatie\\ScheduleMonitor\\Exceptions\\InvalidClassException' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Exceptions/InvalidClassException.php',
-        'Spatie\\ScheduleMonitor\\Jobs\\PingOhDearJob' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Jobs/PingOhDearJob.php',
-        'Spatie\\ScheduleMonitor\\Models\\MonitoredScheduledTask' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Models/MonitoredScheduledTask.php',
-        'Spatie\\ScheduleMonitor\\Models\\MonitoredScheduledTaskLogItem' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Models/MonitoredScheduledTaskLogItem.php',
-        'Spatie\\ScheduleMonitor\\ScheduleMonitorServiceProvider' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/ScheduleMonitorServiceProvider.php',
-        'Spatie\\ScheduleMonitor\\Support\\Concerns\\UsesScheduleMonitoringModels' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Support/Concerns/UsesScheduleMonitoringModels.php',
-        'Spatie\\ScheduleMonitor\\Support\\OhDearPayload\\OhDearPayloadFactory' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Support/OhDearPayload/OhDearPayloadFactory.php',
-        'Spatie\\ScheduleMonitor\\Support\\OhDearPayload\\Payloads\\FailedPayload' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Support/OhDearPayload/Payloads/FailedPayload.php',
-        'Spatie\\ScheduleMonitor\\Support\\OhDearPayload\\Payloads\\FinishedPayload' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Support/OhDearPayload/Payloads/FinishedPayload.php',
-        'Spatie\\ScheduleMonitor\\Support\\OhDearPayload\\Payloads\\Payload' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Support/OhDearPayload/Payloads/Payload.php',
-        'Spatie\\ScheduleMonitor\\Support\\OhDearPayload\\Payloads\\StartingPayload' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Support/OhDearPayload/Payloads/StartingPayload.php',
-        'Spatie\\ScheduleMonitor\\Support\\ScheduledTasks\\ScheduledTaskFactory' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Support/ScheduledTasks/ScheduledTaskFactory.php',
-        'Spatie\\ScheduleMonitor\\Support\\ScheduledTasks\\ScheduledTasks' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Support/ScheduledTasks/ScheduledTasks.php',
-        'Spatie\\ScheduleMonitor\\Support\\ScheduledTasks\\Tasks\\ClosureTask' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Support/ScheduledTasks/Tasks/ClosureTask.php',
-        'Spatie\\ScheduleMonitor\\Support\\ScheduledTasks\\Tasks\\CommandTask' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Support/ScheduledTasks/Tasks/CommandTask.php',
-        'Spatie\\ScheduleMonitor\\Support\\ScheduledTasks\\Tasks\\JobTask' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Support/ScheduledTasks/Tasks/JobTask.php',
-        'Spatie\\ScheduleMonitor\\Support\\ScheduledTasks\\Tasks\\ShellTask' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Support/ScheduledTasks/Tasks/ShellTask.php',
-        'Spatie\\ScheduleMonitor\\Support\\ScheduledTasks\\Tasks\\Task' => __DIR__ . '/..' . '/spatie/laravel-schedule-monitor/src/Support/ScheduledTasks/Tasks/Task.php',
         'Spatie\\Sitemap\\Contracts\\Sitemapable' => __DIR__ . '/..' . '/spatie/laravel-sitemap/src/Contracts/Sitemapable.php',
         'Spatie\\Sitemap\\Crawler\\Observer' => __DIR__ . '/..' . '/spatie/laravel-sitemap/src/Crawler/Observer.php',
         'Spatie\\Sitemap\\Crawler\\Profile' => __DIR__ . '/..' . '/spatie/laravel-sitemap/src/Crawler/Profile.php',
