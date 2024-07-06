@@ -2,6 +2,57 @@
 
 All notable changes to `filament-general-settings` will be documented in this file.
 
+## v1.0.16 - 2024-07-03
+
+**Full Changelog**: https://github.com/joaopaulolndev/filament-general-settings/compare/v1.0.15...v1.0.16
+
+## v1.0.15 - 2024-07-03
+
+### What's Changed
+
+* Add site logo and favicon to Application Settings by @KaramNassar in https://github.com/joaopaulolndev/filament-general-settings/pull/16
+
+**Full Changelog**: https://github.com/joaopaulolndev/filament-general-settings/compare/v1.0.14...v1.0.15
+
+## v1.0.14 - 2024-07-02
+
+### What's Changed
+
+* Add Arabic translation by @KaramNassar in https://github.com/joaopaulolndev/filament-general-settings/pull/15
+
+### New Contributors
+
+* @KaramNassar made their first contribution in https://github.com/joaopaulolndev/filament-general-settings/pull/15
+
+**Full Changelog**: https://github.com/joaopaulolndev/filament-general-settings/compare/v1.0.13...v1.0.14
+
+## v1.0.13 - 2024-06-27
+
+### What's Changed
+
+* Fix bug quando é desativado a aba do email by @jeffersonsimaogoncalves in https://github.com/joaopaulolndev/filament-general-settings/pull/14
+
+**Full Changelog**: https://github.com/joaopaulolndev/filament-general-settings/compare/v1.0.12...v1.0.13
+
+## v1.0.12 - 2024-06-25
+
+- Add pt language
+
+**Full Changelog**: https://github.com/joaopaulolndev/filament-general-settings/compare/v1.0.11...v1.0.12
+
+## v1.0.11 - 2024-06-16
+
+### What's Changed
+
+* Update README.md by @emmanpbarrameda in https://github.com/joaopaulolndev/filament-general-settings/pull/12
+* Fixed issuer reported by: @remybroun and @hackie-me
+
+### New Contributors
+
+* @emmanpbarrameda made their first contribution in https://github.com/joaopaulolndev/filament-general-settings/pull/12
+
+**Full Changelog**: https://github.com/joaopaulolndev/filament-general-settings/compare/v1.0.10...v1.0.11
+
 ## v1.0.10 - 2024-06-04
 
 - Add French language by @wautone

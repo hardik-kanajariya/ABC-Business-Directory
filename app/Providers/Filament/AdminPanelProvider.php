@@ -61,6 +61,7 @@ class AdminPanelProvider extends PanelProvider
                     ->setNavigationGroup('Settings')
                     ->setTitle('General Settings')
                     ->setNavigationLabel('General Settings'),
+                \Mvenghaus\FilamentScheduleMonitor\FilamentPlugin::make()
             ])
             ->widgets([
                 StatsOverview::class,

@@ -2,13 +2,18 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/joaopaulolndev/filament-general-settings.svg?style=flat-square)](https://packagist.org/packages/joaopaulolndev/filament-general-settings)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/joaopaulolndev/filament-general-settings/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/joaopaulolndev/filament-general-settings/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/joaopaulolndev/filament-general-settings/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/joaopaulolndev/filament-general-settings/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/joaopaulolndev/filament-general-settings.svg?style=flat-square)](https://packagist.org/packages/joaopaulolndev/filament-general-settings)
 
 
 
 Create really fast and easily general settings for your Laravel Filament project.
 
+<div class="filament-hidden">
+    
 ![Screenshot of Application Feature](https://raw.githubusercontent.com/joaopaulolndev/filament-general-settings/main/art/joaopaulolndev-filament-general-settings.jpg)
+
+</div>
 
 ## Features & Screenshots
 
@@ -134,7 +139,27 @@ return [
     ]
 ];
 ```
+### Enabling Logo and Favicon Feature
 
+To enable the feature for choosing a logo and favicon within the application tab, you need the following steps:
+1. Publish the migration file to add the `site_logo` and `site_favicon` fields to the general settings table (only if you have installed the package before this feature):
+```bash
+php artisan vendor:publish --tag="filament-general-settings-migrations"
+php artisan migrate
+```
+
+2. Publish the configuration file:
+```bash
+php artisan vendor:publish --tag="filament-general-settings-config"
+```
+
+3. Open the published configuration file config/filament-general-settings.php and set the following key to true:
+```bash
+return [
+    // Other configuration settings...
+    'show_logo_and_favicon' => true,
+];
+```
 ## Usage
 Add in AdminPanelProvider.php
 ```php

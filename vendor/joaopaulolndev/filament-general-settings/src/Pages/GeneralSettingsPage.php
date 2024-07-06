@@ -78,13 +78,27 @@ class GeneralSettingsPage extends Page
 
     public function mount(): void
     {
-        $this->data = GeneralSetting::first()?->toArray();
-        $this->data = $this->data ?: [];
+        $this->data = GeneralSetting::first()?->toArray() ?: [];
+
         $this->data['seo_description'] = $this->data['seo_description'] ?? '';
         $this->data['seo_preview'] = $this->data['seo_preview'] ?? '';
         $this->data['theme_color'] = $this->data['theme_color'] ?? '';
         $this->data['seo_metadata'] = $this->data['seo_metadata'] ?? [];
         $this->data = EmailDataHelper::getEmailConfigFromDatabase($this->data);
+
+        if (isset($this->data['site_logo']) && is_string($this->data['site_logo'])) {
+            $this->data['site_logo'] = [
+                'name' => $this->data['site_logo'],
+            ];
+        }
+
+        if (isset($this->data['site_favicon']) && is_string($this->data['site_favicon'])) {
+            $this->data['site_favicon'] = [
+                'name' => $this->data['site_favicon'],
+            ];
+        }
+
+        $this->data['more_configs'] = $this->data['more_configs'] ?? [];
     }
 
     public function form(Form $form): Form
@@ -163,7 +177,9 @@ class GeneralSettingsPage extends Page
     public function update(): void
     {
         $data = $this->form->getState();
-        $data = EmailDataHelper::setEmailConfigToDatabase($data);
+        if (config('filament-general-settings.show_email_tab')) {
+            $data = EmailDataHelper::setEmailConfigToDatabase($data);
+        }
         $data = $this->clearVariables($data);
 
         GeneralSetting::updateOrCreate([], $data);
@@ -218,7 +234,7 @@ class GeneralSettingsPage extends Page
             return;
         }
 
-        $this->successNotification(__('filament-general-settings::default.test_email_success') . $email);
+        $this->successNotification(__('filament-general-settings::default.test_email_success').$email);
     }
 
     private function successNotification(string $title): void
@@ -231,7 +247,7 @@ class GeneralSettingsPage extends Page
 
     private function errorNotification(string $title, string $body): void
     {
-        Log::error('[EMAIL] ' . $body);
+        Log::error('[EMAIL] '.$body);
 
         Notification::make()
             ->title($title)

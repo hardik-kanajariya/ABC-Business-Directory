@@ -14,11 +14,16 @@
                 bg-indigo-300 bg-fuchsia-300
 
                 bg-primary-500 bg-secondary-500 bg-blue-500 bg-red-500 bg-yellow-500 bg-green-500 bg-purple-500 bg-orange-500 bg-slate-500
-                bg-gray-500 bg-pink-500 bg-cyan-500 bg-violet-500 bg-indigo-500 bg-fuchsia-500
+                bg-gray-500 bg-pink-500 bg-cyan-500 bg-violet-500 bg-indigo-500 bg-fuchsia-500 bg-black
+                !bg-primary-500 !bg-secondary-500 !bg-blue-500 !bg-red-500 !bg-yellow-500 !bg-green-500 !bg-purple-500 !bg-orange-500 !bg-slate-500
+                !bg-gray-500 !bg-pink-500 !bg-cyan-500 !bg-violet-500 !bg-indigo-500 !bg-fuchsia-500 !bg-black
 
                 hover:bg-primary-600 hover:bg-secondary-600 hover:bg-blue-600 hover:bg-red-600 hover:bg-yellow-600 hover:bg-green-600
                 hover:bg-purple-600 hover:bg-orange-600 hover:bg-slate-600 hover:bg-gray-600 hover:bg-pink-600
                 hover:bg-cyan-600 hover:bg-violet-600 hover:bg-indigo-600 hover:bg-fuchsia-600
+                hover:!bg-primary-600 hover:!bg-secondary-600 hover:!bg-blue-600 hover:!bg-red-600 hover:!bg-yellow-600 hover:!bg-green-600
+                hover:!bg-purple-600 hover:!bg-orange-600 hover:!bg-slate-600 hover:!bg-gray-600 hover:!bg-pink-600
+                hover:!bg-cyan-600 hover:!bg-violet-600 hover:!bg-indigo-600 hover:!bg-fuchsia-600
 
                 dark:bg-primary-600 dark:bg-secondary-600 dark:bg-blue-600 dark:bg-red-600 dark:bg-yellow-600 dark:bg-green-600
                 dark:bg-purple-600 dark:bg-orange-600 dark:bg-slate-600 dark:bg-gray-600 dark:bg-pink-600
@@ -51,7 +56,7 @@
                     dark:!text-violet-300 dark:!text-indigo-300 dark:!text-fuchsia-300',
 
         'lines' => [
-            'borders' =>    'border-2 border-4 border-8
+            'borders' =>    'border-2 border-4 border-8 border-black
                             after:border-primary-100 after:border-blue-100 after:border-red-100 after:border-yellow-100
                             after:border-green-100 after:border-purple-100 after:border-orange-100 after:border-slate-100
                             after:border-gray-100 after:border-pink-100 after:border-cyan-100 after:border-violet-100
@@ -83,7 +88,9 @@
                             active:border-primary-600 active:border-secondary-600 active:border-blue-600 active:border-red-600
                             active:border-yellow-600 active:border-green-600 active:border-purple-600 active:border-orange-600
                             active:border-slate-600 active:border-gray-600 active:border-pink-600 active:border-cyan-600
-                            active:border-violet-600 active:border-indigo-600 active:border-fuchsia-600',
+                            active:border-violet-600 active:border-indigo-600 active:border-fuchsia-600
+
+                            focus:border-primary-500',
 
             'rings' =>      'ring-1 ring-2 ring-4 ring-8 focus:ring-1 focus:ring-2 focus:ring-4 focus:ring-8 focus:ring-black
                             focus:ring-primary-500 focus:ring-blue-500 focus:ring-red-500 focus:ring-yellow-500

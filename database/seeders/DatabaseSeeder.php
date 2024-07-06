@@ -15,16 +15,16 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CountrySeeder::class,
             StateSeeder::class,
-//            CategoryTableSeeder::class,
-//            CompanyTableSeeder::class,
-//            ProductSeeder::class,
-//            EventsSeeder::class,
-//            BlogsSeeder::class,
-//            JobsTableSeeder::class,
-//            ForumSeeder::class,
-//            DealSeeder::class,
-//            RateReviewSeeder::class,
-//            RequirementTableSeeder::class
+            CategoryTableSeeder::class,
+            CompanyTableSeeder::class,
+            ProductSeeder::class,
+            EventsSeeder::class,
+            BlogsSeeder::class,
+            JobsTableSeeder::class,
+            ForumSeeder::class,
+            DealSeeder::class,
+            RateReviewSeeder::class,
+            RequirementTableSeeder::class
         ]);
     }
 }

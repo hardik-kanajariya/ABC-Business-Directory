@@ -30,6 +30,8 @@
         "pelmered/filament-money-field": "^1.3",
         "razorpay/razorpay": "2.*",
         "solution-forest/filament-tree": "^2.0",
+        "spatie/laravel-schedule-monitor": "^3.8",
+        "spatie/laravel-sitemap": "^7.2",
         "tapp/filament-auditing": "^3.0",
         "tapp/filament-maillog": "^1.0",
         "valentin-morice/filament-json-column": "^1.3"

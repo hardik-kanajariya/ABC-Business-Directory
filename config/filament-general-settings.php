@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\Action;
 use Joaopaulolndev\FilamentGeneralSettings\Enums\TypeFieldEnum;
 
 return [
