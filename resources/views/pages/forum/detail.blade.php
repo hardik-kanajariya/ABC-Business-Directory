@@ -6,6 +6,7 @@
             width: auto;
         }
     </style>
+    <x-seo :modal="$forum" title="title"/>
 @endsection
 @section('content')
     <x-user.bread-crumb :data="['Home', 'Forum', $forum->title]"/>

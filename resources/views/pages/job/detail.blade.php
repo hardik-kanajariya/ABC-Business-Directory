@@ -1,5 +1,7 @@
 @extends('layouts.user')
-
+@section('head')
+    <x-seo :modal="$job" title="title"/>
+@endsection
 @section('content')
     <x-user.bread-crumb :data="['Home', 'Jobs', $job->title]"/>
     <div class="container w-full mb-10 lg:mb-0 overflow-hidden px-2 mt-3">

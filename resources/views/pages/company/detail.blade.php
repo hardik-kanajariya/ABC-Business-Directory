@@ -21,6 +21,7 @@
             background: white;
         }
     </style>
+    <x-seo :modal="$company" title="name"/>
 @endsection
 
 @section('content')

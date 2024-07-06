@@ -1,5 +1,9 @@
 @extends('layouts.user')
 
+@section('head')
+    <x-seo :modal="$blog" title="title"/>
+@endsection
+
 @section('content')
     <x-user.bread-crumb :data="['Home', 'Blog', $blog->title]"/>
     <div class="container py-6 mx-auto flex flex-wrap">

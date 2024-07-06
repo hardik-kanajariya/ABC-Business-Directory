@@ -1,5 +1,8 @@
 @php use App\classes\HelperFunctions; @endphp
 @extends('layouts.user')
+@section('head')
+    <x-seo :modal="$product" title="name"/>
+@endsection
 @section('content')
     <div class="container mx-auto">
         <x-user.bread-crumb :data="['Home', 'Product', $product->name]"/>

@@ -8,6 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.js"
             integrity="sha512-MdZwHb4u4qCy6kVoTLL8JxgPnARtbNCUIjTCihWcgWhCsLfDaQJib4+OV0O8IS+ea+3Xv/6pH3vYY4LWpU/gbQ=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <x-seo :modal="$event" title="title"/>
 @endsection
 @section('content')
     <x-user.bread-crumb :data="['Home', 'Events', $event->title]"/>
@@ -29,7 +30,8 @@
                         {{$event->created_at->diffForHumans()}}
                     </div>
                 </div>
-                <a href="{{route('view.company', [$event->company->slug])}}" class="hidden md:flex text-purple-600 md:bg-purple-500 md:text-white md:py-2 md:px-4 rounded focus:outline-none focus:shadow-outline-blue hover:bg-purple-800 ml-auto px-4 py-2 text-center text-sm outline-none ring-indigo-300 transition duration-100 bg-gray-100 focus-visible:ring active:bg-gray-200 md:text-base items-center justify-center">
+                <a href="{{route('view.company', [$event->company->slug])}}"
+                   class="hidden md:flex text-purple-600 md:bg-purple-500 md:text-white md:py-2 md:px-4 rounded focus:outline-none focus:shadow-outline-blue hover:bg-purple-800 ml-auto px-4 py-2 text-center text-sm outline-none ring-indigo-300 transition duration-100 bg-gray-100 focus-visible:ring active:bg-gray-200 md:text-base items-center justify-center">
                     Contact Organizer
                     <i class='bx bx-link-external ml-2'></i>
                 </a>
@@ -49,7 +51,8 @@
                     <x-bladewind.tab-content name="gallery">
                         <div class="card p-4 mb-4 w-full">
                             <h2 class="mb-3 text-lg font-bold text-gray-800 lg:text-xl">Gallery</h2>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-4 w-full" id="company-gallery">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-4 w-full"
+                                 id="company-gallery">
                                 @php
                                     // if a gallery is array, convert it to string
                                     if(is_array($event->gallery)){
