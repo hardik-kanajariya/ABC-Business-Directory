@@ -224,25 +224,6 @@
                         </select>
                     </div>
 
-                    <!-- Sort Filter -->
-                    <div class="flex items-center gap-2">
-                        <label for="forum-sort" class="text-gray-700 font-medium whitespace-nowrap">
-                            <i class='bx bx-sort text-lg'></i>
-                            <span class="hidden md:inline ml-1">Sort by:</span>
-                        </label>
-                        <select 
-                            name="sort" 
-                            id="forum-sort" 
-                            class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white min-w-32"
-                            onchange="applyFilters()"
-                        >
-                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Latest Activity</option>
-                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
-                            <option value="most-replies" {{ request('sort') == 'most-replies' ? 'selected' : '' }}>Most Replies</option>
-                            <option value="no-replies" {{ request('sort') == 'no-replies' ? 'selected' : '' }}>Unanswered</option>
-                            <option value="title" {{ request('sort') == 'title' ? 'selected' : '' }}>Title A-Z</option>
-                        </select>
-                    </div>
                     
                     <!-- Clear Filters -->
                     @if(request('category') || request('country') || request('sort') || request('q'))
