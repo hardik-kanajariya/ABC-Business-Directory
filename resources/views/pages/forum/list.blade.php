@@ -202,28 +202,6 @@
                             @endforeach
                         </select>
                     </div>
-
-                    <!-- Country Filter -->
-                    <div class="flex items-center gap-2">
-                        <label for="forum-country" class="text-gray-700 font-medium whitespace-nowrap">
-                            <i class='bx bx-world text-lg'></i>
-                            <span class="hidden md:inline ml-1">Location:</span>
-                        </label>
-                        <select 
-                            name="country" 
-                            id="forum-country" 
-                            class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white min-w-32"
-                            onchange="applyFilters()"
-                        >
-                            <option value="">All Locations</option>
-                            @foreach($countries as $country)
-                                <option value="{{ $country->id }}" {{ request('country') == $country->id ? 'selected' : '' }}>
-                                    {{ $country->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
                     
                     <!-- Clear Filters -->
                     @if(request('category') || request('country') || request('sort') || request('q'))
@@ -248,15 +226,6 @@
                             {{ $forums->total() }} discussions found
                         </span>
                     </div>
-
-                    <!-- Create New Discussion Button -->
-                    <a 
-                        href="#" 
-                        class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors text-sm"
-                    >
-                        <i class='bx bx-plus mr-2'></i>
-                        New Discussion
-                    </a>
                 </div>
             </div>
         </div>
