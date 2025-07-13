@@ -260,7 +260,7 @@
     <div class="container mx-auto px-4 py-8">
         @if($deals->count() > 0)
             <!-- Grid View -->
-            <div id="gridView" class="deals-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <div id="gridView" class="deals-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
                 @foreach($deals as $deal)
                     <div class="deal-card bg-white rounded-xl shadow-md hover:shadow-xl border border-gray-100 overflow-hidden group h-full flex flex-col transition-all duration-300 hover:-translate-y-2 relative">
                         <!-- Discount Ribbon -->
