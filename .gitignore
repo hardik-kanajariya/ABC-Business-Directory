@@ -22,3 +22,4 @@ yarn-error.log
 /public/storage/packages
 *.webp
 secrets.sh
+/vendor/_laravel_ide
