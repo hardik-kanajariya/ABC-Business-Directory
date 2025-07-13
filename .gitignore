@@ -21,3 +21,4 @@ yarn-error.log
 /public/storage/companies
 /public/storage/packages
 *.webp
+secrets.sh

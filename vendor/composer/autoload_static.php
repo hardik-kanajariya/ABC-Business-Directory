@@ -476,8 +476,8 @@ class ComposerStaticInitac121959cb4896372d230dcf7b824d43
         ),
         'Spatie\\LaravelIgnition\\' => 
         array (
-            0 => __DIR__ . '/..' . '/spatie/error-solutions/legacy/laravel-ignition',
-            1 => __DIR__ . '/..' . '/spatie/laravel-ignition/src',
+            0 => __DIR__ . '/..' . '/spatie/laravel-ignition/src',
+            1 => __DIR__ . '/..' . '/spatie/error-solutions/legacy/laravel-ignition',
         ),
         'Spatie\\Invade\\' => 
         array (
@@ -493,8 +493,8 @@ class ComposerStaticInitac121959cb4896372d230dcf7b824d43
         ),
         'Spatie\\Ignition\\' => 
         array (
-            0 => __DIR__ . '/..' . '/spatie/error-solutions/legacy/ignition',
-            1 => __DIR__ . '/..' . '/spatie/ignition/src',
+            0 => __DIR__ . '/..' . '/spatie/ignition/src',
+            1 => __DIR__ . '/..' . '/spatie/error-solutions/legacy/ignition',
         ),
         'Spatie\\FlareClient\\' => 
         array (
@@ -786,8 +786,8 @@ class ComposerStaticInitac121959cb4896372d230dcf7b824d43
         ),
         'Filament\\' => 
         array (
-            0 => __DIR__ . '/..' . '/filament/filament/src',
-            1 => __DIR__ . '/..' . '/filament/spatie-laravel-media-library-plugin/src',
+            0 => __DIR__ . '/..' . '/filament/spatie-laravel-media-library-plugin/src',
+            1 => __DIR__ . '/..' . '/filament/filament/src',
         ),
         'Faker\\' => 
         array (

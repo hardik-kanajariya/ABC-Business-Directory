@@ -1,0 +1,111 @@
+name: Deploy Admin Panel
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Laravel API via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            safe.directory /home/abc/htdocs/abc
+
+            echo "📁 Navigating to Laravel API directory"
+            cd /home/abc/htdocs/abc
+
+            echo "🔄 Pulling latest changes from Git"
+            git pull origin main
+
+            echo "🔧 Creating .env file"
+            cat > .env << 'EOF'
+            APP_NAME=${{ secrets.APP_NAME }}
+            APP_ENV=local
+            APP_KEY=
+            APP_DEBUG=true
+            APP_URL=${{ secrets.APP_URL }}
+
+            LOG_CHANNEL=stack
+            LOG_DEPRECATIONS_CHANNEL=null
+            LOG_LEVEL=debug
+
+            DB_CONNECTION=${{ secrets.DB_CONNECTION }}
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            DB_DATABASE=${{ secrets.DB_DATABASE }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+
+            BROADCAST_DRIVER=log
+            CACHE_DRIVER=file
+            FILESYSTEM_DISK=local
+            QUEUE_CONNECTION=sync
+            SESSION_DRIVER=file
+            SESSION_LIFETIME=120
+
+            MAIL_MAILER=smtp
+            MAIL_HOST=${{ secrets.MAIL_HOST }}
+            MAIL_PORT=${{ secrets.MAIL_PORT }}
+            MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
+            MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
+            MAIL_ENCRYPTION=${{ secrets.MAIL_ENCRYPTION }}
+            MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}
+            MAIL_FROM_NAME="${APP_NAME}"
+            MEMCACHED_HOST=127.0.0.1
+
+            REDIS_HOST=127.0.0.1
+            REDIS_PASSWORD=null
+            REDIS_PORT=6379
+
+            AWS_ACCESS_KEY_ID=
+            AWS_SECRET_ACCESS_KEY=
+            AWS_DEFAULT_REGION=us-east-1
+            AWS_BUCKET=
+            AWS_USE_PATH_STYLE_ENDPOINT=false
+
+            PUSHER_APP_ID=
+            PUSHER_APP_KEY=
+            PUSHER_APP_SECRET=
+            PUSHER_HOST=
+            PUSHER_PORT=443
+            PUSHER_SCHEME=https
+            PUSHER_APP_CLUSTER=mt1
+
+            VITE_APP_NAME="${APP_NAME}"
+            VITE_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
+            VITE_PUSHER_HOST="${PUSHER_HOST}"
+            VITE_PUSHER_PORT="${PUSHER_PORT}"
+            VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"
+            VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+
+            RAZORPAY_API_KEY=${{ secrets.RAZORPAY_API_KEY }}
+            RAZORPAY_API_SECRET=${{ secrets.RAZORPAY_API_SECRET }}
+            EOF
+            
+            echo "🔑 Setting permissions"
+            sudo chown -R ubuntu:www-data storage bootstrap/cache
+            sudo chmod -R 775 storage bootstrap/cache
+            chmod -R 777 storage
+            
+            echo "⚙️ Running Laravel setup"
+            php artisan config:cache
+            php artisan key:generate 
+            php artisan route:cache
+            php artisan view:cache
+            php artisan migrate --force
+            php artisan db:seed
+            php artisan storage:link 
+
+            echo "🗂️ Optimizing Laravel"
+            php artisan optimize
+
+            echo "🧹 Clearing old caches"
+            php artisan queue:restart || true
+
+            echo "✅ Laravel API deployment complete!"
