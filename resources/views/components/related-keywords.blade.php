@@ -144,15 +144,6 @@
     </div>
 </div>
 
-<!-- Toast Notification for Copy Action -->
-<div id="copyToast"
-    class="fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full transition-transform duration-300 z-50">
-    <div class="flex items-center">
-        <i class='bx bx-check-circle mr-2'></i>
-        <span>Keywords copied to clipboard!</span>
-    </div>
-</div>
-
 <style>
     /* Enhanced keyword tag animations */
     .keyword-tag {
