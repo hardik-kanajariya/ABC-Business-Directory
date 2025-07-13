@@ -102,7 +102,6 @@ jobs:
             echo "⚙️ Running Laravel setup"
             php artisan config:cache
             php artisan key:generate 
-            php artisan route:cache
             php artisan view:cache
             php artisan migrate --force
             php artisan db:seed
@@ -146,7 +145,6 @@ jobs:
 
             echo "⚙️ Clearing and rebuilding caches"
             php artisan config:cache
-            php artisan route:cache
             php artisan view:cache
             php artisan optimize
 

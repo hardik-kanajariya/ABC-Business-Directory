@@ -9,6 +9,6 @@
     <meta name="web_author" content="{{ $modal?->user?->name }}">
     <meta property="og:title" content="{{ $modal->seo?->title }}">
     <meta property="og:description" content="{{ $modal->seo?->description }}">
-    <meta property="og:url" content="{{ route('view.company', [$modal?->slug]) }}">
+    <meta property="og:url" content="{{ route('view.company', [$modal?->slug??'']) }}">
 @endif
 

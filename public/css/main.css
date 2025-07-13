@@ -6,7 +6,7 @@
 * Link:     www.hkdevs.tech
 */
 /* HkDevs custom styles*/
-@import url('globals.css');
+/* @import url('globals.css'); */
 @import url('tw-elements.min.css');
 
 *{
@@ -48,59 +48,4 @@ img{
     width: 100%;
     max-width: 95vw !important;
     margin: 0 auto;
-}
-
-.card{
-    border-radius: 0.5rem;
-    box-shadow: 0 0 0.5rem rgba(0,0,0,0.1);
-    overflow: hidden;
-}
-
-.btn{
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    background-color: #c177ff;
-    color: #fff;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-size: 0.875rem;
-    font-weight: 700;
-    letter-spacing: 0.05rem;
-    transition: background-color 0.2s ease-in-out;
-}
-
-.btn:hover{
-    background-color: #333;
-}
-
-.btn:active{
-    background-color: #000;
-}
-
-.search-results {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-top: none;
-    border-radius: 0 0 4px 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: none;
-    z-index: 1;
-}
-
-.search-results a {
-    display: block;
-    padding: 8px;
-    text-decoration: none;
-    color: #333;
-    transition: background-color 0.3s;
-    text-align: start;
-}
-
-.search-results a:hover {
-    background-color: #f0f0f0;
 }
