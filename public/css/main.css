@@ -46,12 +46,11 @@ img{
 
 .container{
     width: 100%;
-    max-width: 1000px !important;
+    max-width: 95vw !important;
     margin: 0 auto;
 }
 
 .card{
-    background-color: #fff;
     border-radius: 0.5rem;
     box-shadow: 0 0 0.5rem rgba(0,0,0,0.1);
     overflow: hidden;

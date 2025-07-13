@@ -2,118 +2,257 @@
 @php use Carbon\Carbon; @endphp
 @extends('layouts.user')
 
+@section('title', 'Welcome to ' . config('app.name') . ' - Your Trusted Business Directory')
+@section('description', 'Discover and connect with over 500,000+ verified businesses worldwide. Find products, services, deals, events, and job opportunities in our comprehensive business directory.')
+@section('keywords', 'business directory, companies, products, services, deals, jobs, events, local business, worldwide directory')
+
 @section('head')
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{{ asset('css/boxicons/css/main.css') }}" as="style">
+    <link rel="prefetch" href="{{ route('products') }}">
+    <link rel="prefetch" href="{{ route('company') }}">
+    
+    <!-- Critical inline styles for performance -->
     <style>
-        .s-form > [type="text"]:focus {
-            outline: none;
-            border: none;
-            --tw-ring-color: #fff;
+        .search-input:focus {
+            outline: none !important;
+            border: none !important;
+            --tw-ring-color: rgb(139 92 246 / 0.5) !important;
+        }
+        
+        .card-container {
+            min-height: 420px;
+        }
+        
+        .mobile-card-container {
+            min-height: 200px;
+        }
+        
+        .category-card {
+            height: 280px;
+        }
+        
+        .event-card {
+            height: 380px;
+        }
+        
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.6s ease-in-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+    </style>
+
+    <!-- Mobile-specific styles -->
+    <style>
+        /* Hide scrollbar for mobile horizontal scroll */
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Ensure consistent card heights on mobile */
+        @media (max-width: 640px) {
+            .category-card {
+                min-height: 140px;
+            }
+        }
+        
+        @media (min-width: 641px) and (max-width: 768px) {
+            .category-card {
+                min-height: 180px;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .category-card {
+                min-height: 220px;
+            }
         }
     </style>
 @endsection
 
-@section('page-scripts')
-    <script>
-        const searchInput = document.getElementById('searchInput');
-        const searchResults = document.getElementById('searchResults');
-
-        searchInput.addEventListener('input', async function () {
-            const inputValue = this.value.trim().toLowerCase();
-
-            // Check if inputValue is at least 3 characters
-            if (inputValue.length >= 3) {
-                const searchURL = "{{ route('api.search.product', ['search' => '__input__']) }}".replace('__input__', inputValue);
-
-                try {
-                    await fetch(searchURL)
-                        .then(response => response.json())
-                        .then(data => {
-                            // Clear previous results
-                            searchResults.innerHTML = '';
-                            // Handle no results
-                            if (data.length === 0) {
-                                const noResults = document.createElement('p');
-                                noResults.textContent = 'No results found';
-                                searchResults.appendChild(noResults);
-                                // styling padding and margin
-                                noResults.style.padding = '8px';
-                                noResults.style.margin = '0';
-                                searchResults.style.display = 'block';
-                                return;
-                            }
-
-                            // Filter and display results
-                            data.forEach(result => {
-                                const resultElement = document.createElement('a');
-                                resultElement.textContent = result;
-                                resultElement.href = "{{ route('products', ['search' => '__slug__']) }}".replace('__slug__', result);
-                                console.log(resultElement.href)
-
-                                searchResults.appendChild(resultElement);
-                                // Show or hide the result container based on the input length
-                                searchResults.style.display = inputValue.length >= 3 ? 'block' : 'none';
-                            });
-                        });
-                } catch (error) {
-                    console.error('Error fetching search results:', error);
-                }
-            } else {
-                searchResults.style.display = 'none';
-            }
-        });
-    </script>
-@endsection
-
 @section('content')
-    <!-- Search Section -->
-    <section class="relative py-8 md:h-[60vh] flex flex-col items-center justify-center overflow-visible">
-        <div class="absolute inset-0 bg-gradient-to-r from-purple-500 via-green-300 to-purple-500 opacity-25"></div>
-        <div class="mx-auto text-center relative z-10 ">
-            <h1 class="md:text-3xl text-xl lg:text-5xl font-semibold text-dark mb-2">Discover Top Companies and
-                Products</h1>
-            <p class="text-dark text-xs md:text-lg mb-4">Explore a vast network of five lakh+ businesses and products
-                for your needs</p>
-            <form action="{{ route('products') }}"
-                  class="mt-2 md:mt-4 flex items-center justify-center rounded-full p-2 pl-1 relative bg-white w-[80vw] md:w-full m-auto md:p-4 md:pl-2"
-                  style="z-index: 99;">
-                <div class="relative flex items-center justify-between w-full s-form">
-                    <label for="searchInput" class="sr-only">Search</label>
-                    <input id="searchInput" name="search" type="text" placeholder="Type at least 3 characters"
-                           autocomplete="off"
-                           class="search-input focus:outline-none px-1 py-1 rounded-full border-none outline-none focus:border-none transition-all duration-300 ease-in-out w-full placeholder:text-xs md:placeholder:text-base md:px-6 md-py-2">
-                    <button type="submit"
-                            class="bg-blue-500 text-white py-2 px-4 w-auto rounded-full ml-2 hover:bg-blue-600 transition-all duration-300 ease-in-out flex items-center justify-center flex-row-reverse">
-                        <i class='bx bx-search-alt-2 md:hidden'></i>
-                        <span class="hidden sm:block md:block lg:block">Search</span>
-                    </button>
+    <!-- Enhanced Hero Section -->
+    <section class="relative min-h-content flex items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 p-5">
+        
+        <!-- Animated Background Elements -->
+        <div class="absolute inset-0">
+            <!-- Gradient Orbs -->
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
+            <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-gradient-to-r from-yellow-400 to-red-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" style="animation-delay: 2s;"></div>
+            <div class="absolute bottom-1/4 left-1/3 w-96 h-96 bg-gradient-to-r from-blue-400 to-green-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" style="animation-delay: 4s;"></div>
+            
+            <!-- Grid Pattern Overlay -->
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-40"></div>
+        </div>
+
+        <!-- Main Content Container -->
+        <div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center bg-transparent">
+            
+            <!-- Headlines -->
+            <div class="mb-12 space-y-6 max-w-4xl mx-auto reveal">
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+                    Discover 
+                    <span class="bg-gradient-to-r from-yellow-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+                        Amazing
+                    </span>
+                    <br class="hidden sm:block">
+                    Businesses 
+                    <span class="relative">
+                        Worldwide
+                        <div class="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full"></div>
+                    </span>
+                </h1>
+                
+                <p class="text-xl md:text-2xl text-white/80 font-light leading-relaxed max-w-3xl mx-auto">
+                    Connect with over 
+                    <span class="text-yellow-400 font-semibold">500,000+</span> 
+                    verified businesses, discover amazing products, and unlock endless opportunities.
+                </p>
+            </div>
+
+            <!-- Enhanced Search Section -->
+            <div class="max-w-4xl mx-auto reveal">
+                <div class="mb-6">
+                    <h2 class="text-2xl md:text-3xl font-bold text-white mb-3">
+                        What are you looking for?
+                    </h2>
+                    <p class="text-white/70">Search from millions of businesses and products</p>
                 </div>
-                <div id="searchResults"
-                     class="search-results mt-2 overflow-auto max-h-[30vh] md:max-h-[40vh] lg:max-h-[50vh]"></div>
-            </form>
+
+                <!-- Search Form -->
+                <form action="{{ route('products') }}" method="GET" class="relative group" id="hero-search-form">
+                    @csrf
+                    <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-2 shadow-2xl border border-white/20 group-hover:shadow-3xl transition-all duration-300 transform group-hover:scale-105">
+                        <div class="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
+                            
+                            <!-- Search Input -->
+                            <div class="flex-1 relative w-full">
+                                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                    </svg>
+                                </div>
+                                <input 
+                                    id="searchInput" 
+                                    name="search" 
+                                    type="text" 
+                                    placeholder="Search for businesses, products, services..."
+                                    autocomplete="off"
+                                    class="search-input w-full pl-12 pr-4 py-4 bg-transparent border-none outline-none text-gray-800 placeholder-gray-500 text-lg font-medium focus:placeholder-gray-400 transition-all duration-300"
+                                    aria-label="Search businesses and products"
+                                >
+                            </div>
+
+                            <!-- Search Button -->
+                            <button 
+                                type="submit"
+                                class="w-full md:w-auto bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center space-x-2 group/btn"
+                                aria-label="Search"
+                            >
+                                <span class="md:block hidden">Search Now</span>
+                                <span class="md:hidden block">Search</span>
+                                <svg class="w-5 h-5 group-hover/btn:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Search Results Dropdown -->
+                    <div id="searchResults" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-200 max-h-96 overflow-y-auto z-50 hidden">
+                        <!-- Results will be populated here -->
+                    </div>
+                </form>
+
+                <!-- Quick Search Tags -->
+                <div class="mt-8">
+                    <p class="text-white/60 mb-4 text-sm">Popular searches:</p>
+                    <div class="flex flex-wrap items-center justify-center gap-3">
+                        @php
+                            $popularSearches = ['Restaurants', 'Tech Companies', 'Healthcare', 'Automotive', 'E-commerce', 'Fashion'];
+                        @endphp
+                        @foreach($popularSearches as $search)
+                            <a href="{{ route('products', ['search' => strtolower($search)]) }}" 
+                               class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium border border-white/20 hover:border-white/40 transition-all duration-300 transform hover:scale-105">
+                                {{ $search }}
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Counter -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-4xl mx-auto reveal">
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 group">
+                    <div class="text-3xl md:text-4xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">500K+</div>
+                    <div class="text-white/70 text-sm">Businesses</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 group">
+                    <div class="text-3xl md:text-4xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">1M+</div>
+                    <div class="text-white/70 text-sm">Products</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 group">
+                    <div class="text-3xl md:text-4xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">150+</div>
+                    <div class="text-white/70 text-sm">Categories</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 group">
+                    <div class="text-3xl md:text-4xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">50+</div>
+                    <div class="text-white/70 text-sm">Countries</div>
+                </div>
+            </div>
         </div>
     </section>
-    <!-- Main Content -->
-    <section class="container mx-auto">
-        <!-- Top Categories -->
-        <section class="p-2 my-1 md:p-8 md:my-4">
-            <div class="container mx-auto">
-                <div class="flex justify-between items-center">
-                    <h1 class="text-base sm:text-2xl md:text-3xl font-semibold inline-block text-blue-900">
-                        Categories</h1>
-                    <a href="{{ route('categories')}}"
-                       class="md:bg-purple-700 text-white rounded-full flex items-center hover:bg-purple-600 transition duration-300 ease-in-out underline md:no-underline md:px-4 md:py-2">
-                        <span class="text-purple-500 md:text-white">Explore All</span>
-                        {{-- Icon --}}
-                        <i class='bx bx-link-external p-1 text-purple-500 md:hidden'></i>
+
+    <!-- Main Content Container -->
+    <div class="bg-gray-50 min-h-screen">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+            <!-- Categories Section -->
+            @if(isset($category) && is_iterable($category) && count($category) > 0)
+            <section class="mb-12 md:mb-20 reveal">
+                <!-- Section Header -->
+                <div class="flex flex-col space-y-4 sm:flex-row sm:justify-between sm:items-center sm:space-y-0 mb-6 md:mb-8">
+                    <div class="text-center sm:text-left">
+                        <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+                            Popular Categories
+                        </h2>
+                        <p class="text-gray-600 text-base md:text-lg">Explore businesses by categories</p>
+                    </div>
+                    <a href="{{ route('categories') }}" 
+                    class="self-center sm:self-auto bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 text-sm md:text-base">
+                        <span>View All</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </a>
                 </div>
-                <hr class="my-2 md:my-5">
-                <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-1 md:gap-3">
-                    <!-- Category Card 1 -->
-                    @if(is_iterable($category))
-                        @forelse($category as $item)
+
+                <!-- Categories Grid - Mobile Optimized -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+                    @foreach($category as $item)
+                        @if($loop->index < 10)
                             @php
-                                $route = match($item->type) {
+                                $route = match($item->type ?? 'company') {
                                     'product' => 'products',
                                     'event' => 'events',
                                     'blog' => 'blogs',
@@ -121,397 +260,668 @@
                                     'forum' => 'forum',
                                     default => 'company',
                                 };
-                                $is_featured = $item->is_featured ? 'bg-yellow-200 hover:shadow-gray-400' : 'bg-indigo-100 hover:shadow-gray-400';
                             @endphp
-                            <a href="{{ route($route, ['category' => $item->name]) }}"
-                               class="flex justify-center items-center w-full mb-6 relative">
-                                @if($item->is_featured)
-                                    <div
-                                        class="absolute top-0 left-0 bg-blue-500 text-white p-1 px-2 text-xs font-bold rounded">
+                            <a href="{{ route($route, ['category' => $item->name ?? '']) }}" 
+                            class="group bg-white rounded-xl md:rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 md:hover:-translate-y-2 overflow-hidden relative h-auto">
+                                
+                                <!-- Featured Badge -->
+                                @if($item->is_featured ?? false)
+                                    <div class="absolute top-2 left-2 md:top-3 md:left-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-0.5 md:px-2 md:py-1 text-xs font-bold rounded-md md:rounded-lg z-10">
                                         Featured
                                     </div>
                                 @endif
-                                <div class="w-64 bg-white rounded-lg shadow-lg overflow-hidden">
-                                    @if($item->image)
-                                        <img src="{{ url('storage/' . $item->image) }}" alt="{{ $item->name }}"
-                                             class="w-full h-48 object-cover"/>
+
+                                <!-- Category Image -->
+                                <div class="relative overflow-hidden">
+                                    @if(isset($item->image) && $item->image)
+                                        <img src="{{ url('storage/' . $item->image) }}" 
+                                            alt="{{ $item->name ?? 'Category' }}"
+                                            class="w-full h-24 sm:h-32 md:h-40 lg:h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                                            loading="lazy"
+                                            onerror="this.parentElement.innerHTML='<div class=\'w-full h-24 sm:h-32 md:h-40 lg:h-48 bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center\'><svg class=\'w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 text-purple-400\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10\'/></svg></div>'"/>
                                     @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                             stroke-width="1.5" stroke="currentColor" class="w-full h-48 object-cover">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                  d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/>
-                                        </svg>
+                                        <div class="w-full h-24 sm:h-32 md:h-40 lg:h-48 bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center">
+                                            <svg class="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                            </svg>
+                                        </div>
                                     @endif
-                                    <div class="p-4">
-                                        <p class="text-gray-700 font-semibold">{{ Str::limit($item->name, 20) }}</p>
-                                        <p class="text-gray-600 text-sm mt-1">{{ $item->countItem($item->type) }}
-                                            Items</p>
+                                </div>
+
+                                <!-- Category Info -->
+                                <div class="p-3 md:p-4 flex flex-col justify-between min-h-[60px] md:min-h-[80px]">
+                                    <div>
+                                        <h3 class="font-bold text-gray-900 text-sm sm:text-base md:text-lg mb-1 group-hover:text-purple-600 transition-colors duration-300 leading-tight">
+                                            {{ Str::limit($item->name ?? 'Unknown Category', 15) }}
+                                        </h3>
+                                        <p class="text-gray-500 text-xs sm:text-sm">
+                                            {{ $item->countItem($item->type ?? 'company') ?? 0 }} Items
+                                        </p>
+                                    </div>
+                                    
+                                    <!-- Mobile Action Indicator -->
+                                    <div class="hidden group-hover:block mt-2">
+                                        <span class="text-purple-600 font-semibold text-xs sm:text-sm">
+                                            Explore →
+                                        </span>
                                     </div>
                                 </div>
                             </a>
-                        @empty
-                            <p class="text-gray-700">No categories available.</p>
-                        @endforelse
-                    @else
-                        <p class="text-gray-700">Invalid category data.</p>
-                    @endif
+                        @endif
+                    @endforeach
                 </div>
-            </div>
-        </section>
 
-        <!-- Featured Companies -->
-        <section class="p-2 my-1 md:p-8 md:my-4">
-            <div class="container mx-auto">
-                <div class="flex justify-between items-center">
-                    <h1 class="text-base sm:text-2xl md:text-3xl font-semibold inline-block text-blue-900">Featured
-                        Companies</h1>
-                    <a href="{{ route('company') }}"
-                       class="md:bg-purple-700 text-white rounded-full flex items-center hover:bg-purple-600 transition duration-300 ease-in-out underline md:no-underline md:px-4 md:py-2">
-                        <span class="text-purple-500 md:text-white">Explore All</span>
-                        {{-- Icon --}}
-                        <i class='bx bx-link-external p-1 text-purple-500 md:hidden'></i>
+                <!-- Mobile View All Button (Duplicate for better UX) -->
+                <div class="mt-6 text-center sm:hidden">
+                    <a href="{{ route('categories') }}" 
+                    class="inline-flex items-center bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 space-x-2">
+                        <span>View All Categories</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </a>
                 </div>
-                <hr class="my-5">
-                <div class="md:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6 mx-auto">
-                    @forelse($companies as $company)
-                        <div
-                            class="reveal hidden md:flex items-center justify-stretch flex-col bg-white rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 ease-in-out hover:-translate-y-2 m-auto w-[90vw] md:w-full h-full">
-                            @if($company->is_featured)
-                                <div
-                                    class="absolute top-0 left-0 bg-red-500 text-white p-1 px-2 text-xs font-bold rounded">
+
+                <!-- Mobile Horizontal Scroll Alternative (Optional) -->
+                <div class="block sm:hidden mt-8">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Quick Browse</h3>
+                    <div class="flex space-x-3 overflow-x-auto pb-4 scrollbar-hide">
+                        @foreach($category->take(8) as $item)
+                            @php
+                                $route = match($item->type ?? 'company') {
+                                    'product' => 'products',
+                                    'event' => 'events',
+                                    'blog' => 'blogs',
+                                    'job' => 'jobs',
+                                    'forum' => 'forum',
+                                    default => 'company',
+                                };
+                            @endphp
+                            <a href="{{ route($route, ['category' => $item->name ?? '']) }}" 
+                            class="flex-shrink-0 bg-white rounded-lg shadow-md p-3 min-w-[120px] text-center hover:shadow-lg transition-all duration-300">
+                                <div class="w-12 h-12 bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                    <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                    </svg>
+                                </div>
+                                <h4 class="font-semibold text-xs text-gray-900 mb-1">
+                                    {{ Str::limit($item->name ?? 'Category', 12) }}
+                                </h4>
+                                <p class="text-xs text-gray-500">
+                                    {{ $item->countItem($item->type ?? 'company') ?? 0 }}
+                                </p>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </section>
+            @endif
+
+            <!-- Featured Companies Section -->
+            @if(isset($companies) && count($companies) > 0)
+            <section class="mb-20 reveal">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                            Featured Companies
+                        </h2>
+                        <p class="text-gray-600 text-lg">Discover trusted business partners</p>
+                    </div>
+                    <a href="{{ route('company') }}" 
+                       class="mt-4 sm:mt-0 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                        <span>View All Companies</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    @foreach($companies as $company)
+                        <div class="card-container group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden relative flex flex-col">
+                            
+                            @if($company->is_featured ?? false)
+                                <div class="absolute top-3 left-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-1 text-xs font-bold rounded-lg z-10">
                                     Featured
                                 </div>
                             @endif
-                            <a href="{{ route('view.company', [$company->slug]) }}"
-                               class="w-[150px] h-[150px] md:w-full md:h-48 md:p-4 md:block object-contain">
-                                <img alt="company photo" src="{{ url('storage/' . $company->logo) }}"
-                                     class="w-[150px] h-[150px] object-contain md:w-full md:h-full"/>
-                            </a>
-                            <div class="flex flex-col items-center justify-center h-auto my-auto">
-                                <div class="p-2 flex flex-col items-center justify-center m-auto">
-                                    <h3 class="text-base md:text-lg font-bold text-justify text-indigo-900 mb-2">{{ $company->name }}</h3>
-                                    <p class="text-red-700 text-center text-xs md:text-sm">{{ $company->address?->country?->name }}</p>
-                                    <h2 class="text-sm md:text-base bold italic underline text-indigo-700 mt-2">Deals
-                                        In</h2>
-                                    @php
-                                        $limitedText = Str::limit($company->dealsIn(), 30, '...');
-                                    @endphp
-                                    <p class="text-gray-700 text-center text-xs md:text-sm">{{ $limitedText }}</p>
-                                </div>
-                            </div>
-                            <div class="w-[calc(80%-1rem)] m-auto">
-                                <a href="{{ route('view.company', [$company->slug]) }}"
-                                   class="text-purple-500 mb-1 bg-purple-100 hover:bg-purple-500 hover:text-white rounded-full p-1 transition duration-300 ease-in-out flex items-center justify-center transform hover:-translate-y-1 hover:scale-60 text-center text-xs md:text-base">
-                                    <span class="ml-1">View Profile &nbsp;</span>
-                                    <i class='bx bx-link-external mr-2'></i>
-                                </a>
-                            </div>
 
-                        </div>
-                        <!-- Mobile Version Card -->
-                        <div
-                            class="md:hidden company-card bg-white rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 ease-in-out hover:-translate-y-2 flex flex-col items-center justify-center p-2 mx-2 my-5">
-                            <div class="overflow-hidden mb-4 p-2 md:border-r border-r-1 border-solid border-gray-300">
-                                <img class="w-full h-40 object-contain overflow-hidden"
-                                     src="{{ url('storage/' . $company->logo) }}"
-                                     alt="">
-                            </div>
-                            <ul class="w-full mx-3 ml-5">
-                                <li class="flex flex-nowrap items-center">
-                                    <span class="text-lg md:text-2xl mr-3">{{$company->name}}</span>
-                                    @if($company->is_featured)
-                                        <span>
-                                        <button
-                                            class="inline-flex items-center bg-neutral-100 mr-1 text-white border border-solid-400 rounded">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                 stroke-width="1.5" stroke="currentColor"
-                                                 class="w-4 h-4 text-white bg-green-500">
-                                              <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/>
-                                            </svg>
-                                            <span class="mx-1 text-gray-500 text-xs">Featured</span>
-                                        </button>
-                                    </span>
-                                    @endif
-                                </li>
-                                <li class="text-sm md:text-base text-gray-500">
-                                    <i class='bx bx-been-here text-red-500'></i> {{$company->address?->state?->name}}
-                                    , {{$company->address?->country?->name}}
-                                </li>
-                                <li class="w-full flex items-center">
-                                    <button class="inline-flex items-center mr-1 text-gray-500">
-                                        <i class='bx bxs-star text-green-400 text-sm'></i>
-                                        <span
-                                            class="mx-1 text-gray-500 text-sm">{{HelperFunctions::getRatingAverage('company', $company->id)}}</span>
-                                        <span class="mx-1 text-gray-500 text-sm">({{HelperFunctions::getRatingCount('company', $company->id)}} Review)</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <p class="text-gray-500 text-sm"><span class="font-bold">Deals In</span>:
-                                        @forelse($company->extra_things as $item)
-                                            @php
-                                                $limitedText = Str::limit($item, 80, '...');
-                                            @endphp
-                                            <span class="text-gray-500 text-sm">
-                                            {{ $limitedText }}
-                                                @if (strlen($item) > 80)
-                                                    <a href="#" class="text-blue-500"
-                                                       onclick="showFullText(this)">...More</a>
-                                                    <span class="full-text" style="display: none;">{{ $item }}</span>
-                                                @endif
-                                                @if (!$loop->last)
-                                                    |
-                                                @endif
-                                        </span>
-                                        @empty
-                                            <span class="text-gray-500 text-sm">No Products</span>
-                                        @endforelse
-                                        <script>
-                                            function showFullText(link) {
-                                                let fullTextSpan = link.nextElementSibling;
-                                                link.style.display = 'none';
-                                                fullTextSpan.style.display = 'inline';
-                                            }
-                                        </script>
-                                    </p>
-                                </li>
-                                <li>
-                                    <div class="md:w-[calc(20%-1rem)] mt-5">
-                                        <a href="{{ route('view.company', [$company->slug]) }}"
-                                           class="text-purple-500 bg-purple-100 hover:bg-purple-500 hover:text-white rounded-full p-1 mt-1 transition duration-300 ease-in-out flex items-center justify-center transform hover:-translate-y-1 hover:scale-60 text-center">
-                                            View Profile &nbsp;
-                                            <i class='bx bx-link-external text-2xl mr-2'></i>
-                                        </a>
+                            <!-- Company Logo -->
+                            <div class="relative p-6 flex items-center justify-center bg-gray-50 h-48">
+                                @if(isset($company->logo) && $company->logo)
+                                    <img src="{{ url('storage/' . $company->logo) }}" 
+                                         alt="{{ $company->name ?? 'Company' }}"
+                                         class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-300"
+                                         loading="lazy"
+                                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($company->name ?? 'Company') }}&background=6366f1&color=fff&size=150'"/>
+                                @else
+                                    <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                                        <span class="text-white font-bold text-2xl">{{ substr($company->name ?? 'C', 0, 1) }}</span>
                                     </div>
-                                </li>
-                            </ul>
-                        </div>
-                    @empty
-                </div>
-                <p class="text-gray-700 w-100">No featured companies available.</p>
-                @endforelse
-            </div>
-        </section>
+                                @endif
+                            </div>
 
-        <!-- Top Products -->
-        <section class="p-2 my-1 md:p-8 md:my-4">
-            <div class="flex justify-between items-center">
-                <h1 class="text-base sm:text-2xl md:text-3xl font-semibold inline-block text-blue-900">Explore Top Products</h1>
-                <a href="{{ route('products') }}"
-                   class="md:bg-purple-700 text-white rounded-full flex items-center hover:bg-purple-600 transition duration-300 ease-in-out underline md:no-underline md:px-4 md:py-2">
-                    <span class="text-purple-500 md:text-white">Explore All</span>
-                    {{-- Icon --}}
-                    <i class='bx bx-link-external p-1 text-purple-500 md:hidden'></i>
-                </a>
-            </div>
-            <hr class="my-5">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                @forelse($products as $item)
-                    <div
-                        class="reveal hidden md:flex bg-white rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 ease-in-out hover:-translate-y-2 flex-col items-center justify-center w-[90vw] md:w-full">
-                        @if($item->is_featured)
-                            <div class="absolute top-0 left-0 bg-red-500 text-white p-1 px-2 text-xs font-bold rounded">
-                                Featured
-                            </div>
-                        @endif
-                        <a href="{{ route('view.product', [$item->slug]) }}"
-                           class="w-[150px] h-[150px] md:w-full md:p-4 md:m-auto md:block md:h-full object-contain">
-                            <img alt="company photo" src="{{ url('storage/' . $item->thumbnail) }}"
-                                 class="w-[150px] h-[150px] md:w-full md:h-48 object-contain"/>
-                        </a>
-                        <div class="p-2 flex flex-col items-center justify-center">
-                            <header class="flex my-2 font-light text-sm items-center">
-                                <i class="bx bx-category text-indigo-500 mr-1"></i>
-                                <p>{{ $item->category->name }}</p>
-                            </header>
-                            <p class="text-base font-medium mb-2 text-center">{{ Str::limit($item->name, 30, '...') }}</p>
-                            <p class="text-red-700 text-center text-xs md:text-sm">{{ $item->company->name }}</p>
-                            <p class="text-gray-700 text-center text-xs md:text-sm">{{ $item->company->address->country->name }}</p>
-                            <p class="text-gray-700 text-center text-xs md:text-sm">Price:
-                                ${{ HelperFunctions::formatCurrency($item->price) }}</p>
-                        </div>
-                        <div class="relative bottom-0 md:static right-1 mb-2 w-auto md:w-[calc(80%-1rem)]">
-                            <a href="{{ route('view.product', [$item->slug]) }}"
-                               class="text-purple-500 mb-1 bg-purple-100 hover:bg-purple-500 hover:text-white rounded-full p-1 transition duration-300 ease-in-out flex items-center justify-center transform hover:-translate-y-1 hover:scale-60 text-center text-xs md:text-base">
-                                <span class="ml-1">Enquire Now &nbsp;</span>
-                                <i class='bx bx-link-external mr-2'></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div
-                        class="reveal md:hidden bg-white rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 ease-in-out hover:-translate-y-2 flex md:flex-col items-start md:items-center md:justify-center">
-                        @if($item->is_featured)
-                            <div class="absolute top-0 left-0 bg-red-500 text-white p-1 px-2 text-xs font-bold rounded"
-                                 style="z-index: 99">
-                                Featured
-                            </div>
-                        @endif
-                        <a href="{{ route('view.product', [$item->slug]) }}"
-                           class="w-[100px] md:w-full h-[80px] md:p-4 md:m-auto md:block md:h-full object-contain">
-                            <img alt="company photo" src="{{ url('storage/' . $item->thumbnail) }}"
-                                 class="w-full h-full object-cover img-remove-bg"/>
-                        </a>
-                        <div class="p-1 ml-2 md:p-2 flex flex-col items-start md:items-center md:justify-center w-full">
-                            <header class="flex my-2 font-light text-xs md:text-base items-center">
-                                <i class="bx bx-category text-indigo-500 mr-1"></i>
-                                <p>{{ $item->category->name }}</p>
-                            </header>
-                            <p class="text-sm md:text-xl font-medium mb-2">{{ $item->name }}</p>
-                            <p class="text-red-700 text-xs md:text-sm">{{ $item->company ? $item->company->name: '' }}</p>
-                            <p class="text-gray-700 text-xs md:text-sm">{{ $item->company? $item->company->address->country->name : '' }}</p>
-                            <p class="text-gray-700 text-xs md:text-sm">Price:
-                                ${{ HelperFunctions::formatCurrency($item->price) }}</p>
-                            <div class="block md:hidden md:static mb-2 w-full">
-                                <a href="{{ route('view.product', [$item->slug]) }}"
-                                   class="text-purple-500 mb-1 rounded-full p-1 transition duration-300 ease-in-out flex items-center justify-center transform hover:-translate-y-1 hover:scale-60 text-center text-xs md:text-base">
-                                    <span class="ml-1">Enquire Now &nbsp;</span>
-                                    <i class='bx bx-link-external mr-2'></i>
+                            <!-- Company Info -->
+                            <div class="p-6 flex-1 flex flex-col">
+                                <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors duration-300">
+                                    {{ Str::limit($company->name ?? 'Unknown Company', 25) }}
+                                </h3>
+                                
+                                <div class="mb-3">
+                                    <div class="flex items-center text-gray-500 text-sm mb-1">
+                                        <svg class="w-4 h-4 mr-2 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                        </svg>
+                                        {{ $company->address->country->name ?? 'Unknown Location' }}
+                                    </div>
+                                    
+                                    <div class="flex items-center text-gray-500 text-sm">
+                                        <svg class="w-4 h-4 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                        {{ HelperFunctions::getRatingAverage('company', $company->id) ?? '0.0' }}
+                                        ({{ HelperFunctions::getRatingCount('company', $company->id) ?? 0 }} reviews)
+                                    </div>
+                                </div>
+
+                                <div class="mb-4 flex-1">
+                                    <h4 class="text-sm font-semibold text-purple-600 mb-2">Deals In:</h4>
+                                    <p class="text-gray-700 text-sm line-clamp-3">
+                                        {{ Str::limit($company->dealsIn() ?? 'Various products and services', 80) }}
+                                    </p>
+                                </div>
+
+                                <!-- CTA Button -->
+                                <a href="{{ route('view.company', [$company->slug ?? '']) }}" 
+                                   class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-4 rounded-xl font-semibold text-center transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+                                    <span>View Profile</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                    </svg>
                                 </a>
                             </div>
                         </div>
-                        <div
-                            class="hidden md:block absolute bottom-0 md:static right-1 mb-2 w-full md:w-[calc(80%-1rem)]">
-                            <a href="{{ route('view.product', [$item->slug]) }}"
-                               class="text-purple-500 mb-1 bg-purple-100 hover:bg-purple-500 hover:text-white rounded-full p-1 transition duration-300 ease-in-out flex items-center justify-center transform hover:-translate-y-1 hover:scale-60 text-center text-xs md:text-base">
-                                <span class="ml-1">Enquire Now &nbsp;</span>
-                                <i class='bx bx-link-external mr-2'></i>
-                            </a>
-                        </div>
-                    </div>
-                @empty
-                    <p class="text-gray-700 col-span-full">No listings found.</p>
-                @endforelse
-            </div>
-        </section>
+                    @endforeach
+                </div>
+            </section>
+            @endif
 
-        <!-- Featured Events -->
-        <section class="p-2 my-1 md:p-8 md:my-4">
-            <div class="container mx-auto">
-                <div class="flex justify-between items-center">
-                    <h1 class="text-base sm:text-2xl md:text-3xl font-semibold inline-block text-blue-900">Featured Events</h1>
-                    <a href="{{ route('events') }}"
-                       class="md:bg-purple-700 text-white rounded-full flex items-center hover:bg-purple-600 transition duration-300 ease-in-out underline md:no-underline md:px-4 md:py-2">
-                        <span class="text-purple-500 md:text-white">Explore All</span>
-                        {{-- Icon --}}
-                        <i class='bx bx-link-external p-1 text-purple-500 md:hidden'></i>
+            <!-- Top Products Section -->
+            @if(isset($products) && count($products) > 0)
+            <section class="mb-20 reveal">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                            Top Products
+                        </h2>
+                        <p class="text-gray-600 text-lg">Discover amazing products from verified sellers</p>
+                    </div>
+                    <a href="{{ route('products') }}" 
+                       class="mt-4 sm:mt-0 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                        <span>View All Products</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </a>
                 </div>
-                <hr class="my-5">
-                <div class="owl-carousel grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    @forelse($events as $event)
-                        <div
-                            class="reveal bg-white rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 ease-in-out hover:-translate-y-2">
-                            <div class="each relative flex flex-col items-stretch justify-center">
-                                <img src="{{ url('storage/'.$event->thumbnail) }}"
-                                     class="w-full h-48 object-cover rounded-t-lg" alt="Event">
-                                <div class="desc p-4 text-gray-800">
-                                    <div class="flex items-center mt-2">
-                                        <img class='w-8 h-8 object-cover rounded-full' alt='User avatar' src='https://ui-avatars.com/api/?name={{$event->company?->name}}'/>
-                                        <div class="pl-3">
-                                            <div class="font-medium text-sm">
-                                                {{$event->company?->name}}
-                                            </div>
-                                            <div class="text-gray-600 text-sm">
-                                                {{$event->created_at->diffForHumans()}}
-                                            </div>
-                                        </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    @foreach($products as $item)
+                        <div class="card-container group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden relative flex flex-col">
+                            
+                            @if($item->is_featured ?? false)
+                                <div class="absolute top-3 left-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-1 text-xs font-bold rounded-lg z-10">
+                                    Featured
+                                </div>
+                            @endif
+
+                            <!-- Product Image -->
+                            <div class="relative overflow-hidden h-48">
+                                @if(isset($item->thumbnail) && $item->thumbnail)
+                                    <img src="{{ url('storage/' . $item->thumbnail) }}" 
+                                         alt="{{ $item->name ?? 'Product' }}"
+                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                         loading="lazy"
+                                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNGM0Y0RjYiLz48L3N2Zz4='"/>
+                                @else
+                                    <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                        <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                        </svg>
                                     </div>
-                                    <a href="{{route('view.event', [$event->slug])}}" target="_new"
-                                       class="my-3 title font-bold block cursor-pointer hover:underline">{{$event->title}}</a>
-                                    <div class="md:block flex items-center justify-between">
-                                        <div class="flex items-center justify-between mt-4">
-                                            <div class="flex items-center">
-                                                <i class='bx bx-calendar text-gray-600'></i>
-                                                @php
-                                                    $date = Carbon::parse($event->start);
-                                                    $date = $date->format('M d, Y');
-                                                @endphp
-                                                <span class="text-gray-600 text-sm ml-1">{{$date}}</span>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center justify-between mt-4">
-                                            <div class="flex items-center">
-                                                <i class='bx bx-current-location text-gray-600'></i>
-                                                <span class="text-gray-600 text-sm ml-1">{{$event->address->country->name}}</span>
-                                            </div>
-                                        </div>
+                                @endif
+                            </div>
+
+                            <!-- Product Info -->
+                            <div class="p-6 flex-1 flex flex-col">
+                                <!-- Category -->
+                                <div class="flex items-center mb-3">
+                                    <span class="bg-purple-100 text-purple-600 px-2 py-1 rounded-lg text-xs font-semibold">
+                                        {{ $item->category->name ?? 'Uncategorized' }}
+                                    </span>
+                                </div>
+
+                                <!-- Product Name -->
+                                <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors duration-300 line-clamp-2">
+                                    {{ Str::limit($item->name ?? 'Unknown Product', 40) }}
+                                </h3>
+
+                                <!-- Company Info -->
+                                <div class="mb-3">
+                                    <p class="text-red-600 font-semibold text-sm">{{ $item->company->name ?? 'Unknown Company' }}</p>
+                                    <p class="text-gray-500 text-sm">{{ $item->company->address->country->name ?? 'Unknown Location' }}</p>
+                                </div>
+
+                                <!-- Price -->
+                                <div class="mb-4 flex-1">
+                                    <div class="text-2xl font-bold text-green-600">
+                                        ${{ HelperFunctions::formatCurrency($item->price ?? 0) }}
                                     </div>
                                 </div>
+
+                                <!-- CTA Button -->
+                                <a href="{{ route('view.product', [$item->slug ?? '']) }}" 
+                                   class="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-3 px-4 rounded-xl font-semibold text-center transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+                                    <span>Enquire Now</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                    </svg>
+                                </a>
                             </div>
                         </div>
-                    @empty
-                        <p class="text-gray-700">No featured events available.</p>
-                    @endforelse
+                    @endforeach
                 </div>
-            </div>
-        </section>
+            </section>
+            @endif
 
-        <!-- Why Choose Us -->
-        <section class="text-gray-600 body-font mt-3">
-            <div class="container px-5 py-4 mx-auto">
-                <div class="text-center mb-10">
-                    <h1 class="sm:text-3xl text-2xl font-medium title-font text-gray-900 mb-4">
-                        Why Choose Us
-                    </h1>
-                    <p class="text-base leading-relaxed xl:w-2/4 lg:w-3/4 mx-auto text-gray-500">
-                        In the picturesque village of Jam Kalyanpur, we take pride in our commitment to excellence.
-                        Explore why choosing us is a decision you won't regret.
+            <!-- Featured Events Section -->
+            @if(isset($events) && count($events) > 0)
+            <section class="mb-20 reveal">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                            Upcoming Events
+                        </h2>
+                        <p class="text-gray-600 text-lg">Don't miss these exciting business events</p>
+                    </div>
+                    <a href="{{ route('events') }}" 
+                       class="mt-4 sm:mt-0 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                        <span>View All Events</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    @foreach($events as $event)
+                        <div class="event-card group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden relative flex flex-col">
+                            
+                            <!-- Event Image -->
+                            <div class="relative overflow-hidden h-48">
+                                @if(isset($event->thumbnail) && $event->thumbnail)
+                                    <img src="{{ url('storage/' . $event->thumbnail) }}" 
+                                         alt="{{ $event->title ?? 'Event' }}"
+                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                         loading="lazy"
+                                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNGM0Y0RjYiLz48L3N2Zz4='"/>
+                                @else
+                                    <div class="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                                        <svg class="w-16 h-16 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- Event Info -->
+                            <div class="p-6 flex-1 flex flex-col">
+                                <!-- Event Organizer -->
+                                <div class="flex items-center mb-4">
+                                    <img class="w-8 h-8 object-cover rounded-full mr-3" 
+                                         src="https://ui-avatars.com/api/?name={{ urlencode($event->company->name ?? 'Organizer') }}&background=6366f1&color=fff&size=32"
+                                         alt="Organizer">
+                                    <div>
+                                        <div class="font-semibold text-sm text-gray-900">{{ $event->company->name ?? 'Unknown Organizer' }}</div>
+                                        <div class="text-gray-500 text-xs">{{ $event->created_at->diffForHumans() ?? '' }}</div>
+                                    </div>
+                                </div>
+
+                                <!-- Event Title -->
+                                <h3 class="text-lg font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors duration-300 line-clamp-2 flex-1">
+                                    {{ $event->title ?? 'Unknown Event' }}
+                                </h3>
+
+                                <!-- Event Details -->
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center text-gray-600 text-sm">
+                                        <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        @php
+                                            $eventDate = isset($event->start) ? Carbon::parse($event->start)->format('M d, Y') : 'TBD';
+                                        @endphp
+                                        {{ $eventDate }}
+                                    </div>
+                                    
+                                    <div class="flex items-center text-gray-600 text-sm">
+                                        <svg class="w-4 h-4 mr-2 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                        </svg>
+                                        {{ $event->address->country->name ?? 'Unknown Location' }}
+                                    </div>
+                                </div>
+
+                                <!-- CTA Button -->
+                                <a href="{{ route('view.event', [$event->slug ?? '']) }}" 
+                                   class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 px-4 rounded-xl font-semibold text-center transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+                                    <span>View Event</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </section>
+            @endif
+
+            <!-- Why Choose Us Section -->
+            <section class="mb-20 reveal">
+                <div class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-3xl p-8 md:p-16">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                            Why Choose Our Platform?
+                        </h2>
+                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                            We connect businesses and customers worldwide with our comprehensive directory platform, 
+                            offering verified listings and direct communication channels.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="text-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                            <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-4">Global Reach</h3>
+                            <p class="text-gray-600">Connect with businesses worldwide and expand your reach to international markets with our comprehensive directory.</p>
+                        </div>
+
+                        <div class="text-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                            <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-4">Direct Communication</h3>
+                            <p class="text-gray-600">Chat directly with business owners and get instant responses to your inquiries and business needs.</p>
+                        </div>
+
+                        <div class="text-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                            <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-4">Verified Listings</h3>
+                            <p class="text-gray-600">All business listings are verified to ensure authenticity and quality, giving you confidence in every connection.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Call to Action Section -->
+            <section class="reveal">
+                <div class="bg-gradient-to-r from-purple-600 to-blue-600 rounded-3xl p-8 md:p-16 text-center text-white">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                        Ready to Grow Your Business?
+                    </h2>
+                    <p class="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+                        Join thousands of businesses already using our platform to connect with customers worldwide.
                     </p>
-                    <div class="flex mt-6 justify-center">
-                        <div class="w-16 h-1 rounded-full bg-indigo-500 inline-flex"></div>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="#" 
+                           class="bg-white text-purple-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
+                            List Your Business
+                        </a>
+                        <a href="{{ route('company') }}" 
+                           class="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-purple-600 transition-all duration-300 transform hover:scale-105">
+                            Browse Businesses
+                        </a>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="p-4 flex flex-col text-center items-center card reveal">
-                        <div
-                            class="w-20 h-20 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
-                            </svg>
-                        </div>
-                        <div class="flex-grow">
-                            <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Promote your business worldwide</h2>
-                            <p class="leading-relaxed text-base">
-                                As a full-stack apprentice intern in the heart of Kathiawar, specializing in Angular and
-                                .NET Core,
-                                I bring the world to your business.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="p-4 flex flex-col text-center items-center card reveal">
-                        <div
-                            class="w-20 h-20 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
-                            </svg>
-                        </div>
-                        <div class="flex-grow">
-                            <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Direct Chat with business
-                                lister</h2>
-                            <p class="leading-relaxed text-base">
-                                Engage in direct conversations with me, your dedicated full-stack developer, ensuring
-                                your requirements are met efficiently.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="p-4 flex flex-col text-center items-center card reveal">
-                        <div
-                            class="w-20 h-20 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4 flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-                            </svg>
-                        </div>
-                        <div class="flex-grow">
-                            <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Find Millions of buyers</h2>
-                            <p class="leading-relaxed text-base">
-                                With a dream to become the best game developer and full-stack developer globally, my
-                                skills attract millions of potential buyers to your projects.
-                            </p>
-                        </div>
-                    </div>
-                </div>
+            </section>
+        </div>
+    </div>
+@endsection
+
+@section('page-scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    let searchTimeout;
+    let currentRequest;
+
+    // Enhanced search with error handling and performance optimization
+    searchInput.addEventListener('input', async function() {
+        clearTimeout(searchTimeout);
+        const inputValue = this.value.trim();
+
+        if (inputValue.length >= 3) {
+            searchTimeout = setTimeout(async () => {
+                try {
+                    // Cancel previous request if still pending
+                    if (currentRequest) {
+                        currentRequest.abort();
+                    }
+
+                    // Create new AbortController for this request
+                    const controller = new AbortController();
+                    currentRequest = controller;
+
+                    // Show loading state
+                    showSearchLoading();
+
+                    const searchURL = "{{ route('api.search.product', ['search' => '__input__']) }}".replace('__input__', encodeURIComponent(inputValue));
+
+                    const response = await fetch(searchURL, {
+                        signal: controller.signal,
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    displaySearchResults(data, inputValue);
+
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        console.error('Search error:', error);
+                        showSearchError();
+                    }
+                } finally {
+                    currentRequest = null;
+                }
+            }, 300);
+        } else {
+            hideSearchResults();
+        }
+    });
+
+    function showSearchLoading() {
+        searchResults.innerHTML = `
+            <div class="p-4 flex items-center space-x-3">
+                <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-600"></div>
+                <span class="text-gray-600">Searching...</span>
             </div>
-        </section>
-    </section>
+        `;
+        searchResults.classList.remove('hidden');
+    }
+
+    function showSearchError() {
+        searchResults.innerHTML = `
+            <div class="p-4 text-center">
+                <div class="text-red-500 mb-2">
+                    <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                </div>
+                <p class="text-gray-600">Search temporarily unavailable. Please try again.</p>
+            </div>
+        `;
+    }
+
+    function displaySearchResults(data, query) {
+        searchResults.innerHTML = '';
+
+        if (!data || !Array.isArray(data) || data.length === 0) {
+            searchResults.innerHTML = `
+                <div class="p-4 text-center">
+                    <div class="text-gray-400 mb-2">
+                        <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <p class="text-gray-600">No results found for "${query}"</p>
+                    <p class="text-gray-500 text-sm mt-1">Try different keywords or check spelling</p>
+                </div>
+            `;
+            searchResults.classList.remove('hidden');
+            return;
+        }
+
+        // Display results with enhanced styling
+        const resultsHTML = data.map((result, index) => {
+            const productUrl = "{{ route('products', ['search' => '__slug__']) }}".replace('__slug__', encodeURIComponent(result));
+            
+            return `
+                <a href="${productUrl}" class="block p-4 hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 last:border-b-0">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-semibold text-gray-800 truncate">${escapeHtml(result)}</div>
+                            <div class="text-sm text-gray-500">Product</div>
+                        </div>
+                        <div class="text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }).join('');
+
+        searchResults.innerHTML = resultsHTML;
+        searchResults.classList.remove('hidden');
+    }
+
+    function hideSearchResults() {
+        searchResults.classList.add('hidden');
+    }
+
+    function escapeHtml(text) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+
+    // Hide results when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            hideSearchResults();
+        }
+    });
+
+    // Handle search form submission
+    document.getElementById('hero-search-form').addEventListener('submit', function(e) {
+        const searchValue = searchInput.value.trim();
+        if (!searchValue) {
+            e.preventDefault();
+            searchInput.focus();
+            return false;
+        }
+    });
+
+    // Smooth scroll function
+    window.scrollToContent = function() {
+        const heroHeight = window.innerHeight;
+        window.scrollTo({
+            top: heroHeight - 100,
+            behavior: 'smooth'
+        });
+    };
+
+    // Performance optimization: Lazy load images
+    const images = document.querySelectorAll('img[loading="lazy"]');
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                // Add fade-in class when image loads
+                img.addEventListener('load', () => {
+                    img.classList.add('fade-in');
+                });
+                observer.unobserve(img);
+            }
+        });
+    }, {
+        rootMargin: '50px'
+    });
+
+    images.forEach(img => imageObserver.observe(img));
+
+    // Add loading animation to cards
+    const cards = document.querySelectorAll('.reveal');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+    });
+
+    // Handle mobile menu if present
+    const mobileMenuButtons = document.querySelectorAll('[data-mobile-menu]');
+    mobileMenuButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            document.body.classList.toggle('overflow-hidden');
+        });
+    });
+});
+
+// Error boundary for unhandled errors
+window.addEventListener('error', function(e) {
+    console.error('Application error:', e.error);
+    // Could send to error reporting service
+});
+
+// Performance monitoring
+window.addEventListener('load', function() {
+    if ('performance' in window) {
+        const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+        console.log(`Page load time: ${loadTime}ms`);
+        
+        // Report slow loading
+        if (loadTime > 3000) {
+            console.warn('Page loaded slowly:', loadTime + 'ms');
+        }
+    }
+});
+</script>
 @endsection

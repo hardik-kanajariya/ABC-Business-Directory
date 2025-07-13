@@ -62,6 +62,17 @@ Route::prefix('test')->group(function () {
         }
         return 'Done';
     });
+
+    // Error Pages test 
+    Route::get('404', function () {
+        return view('errors.404');
+    })->name('errors.404');
+    Route::get('500', function () {
+        return view('errors.500');
+    })->name('errors.500');
+    Route::get('403', function () {
+        return view('errors.403');
+    })->name('errors.403');
 });
 
 Route::name('razorpay.')
