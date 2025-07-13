@@ -25,9 +25,7 @@ jobs:
             cd /home/abc/htdocs/abc
 
             echo "🔄 Pulling latest changes from Git"
-            git reset --hard
-            git clean -fd
-            git pull origin main --force
+            sudo git reset --hard origin/main && sudo git clean -fd && sudo git pull origin main
 
             echo "🔧 Creating .env file"
             cat > .env << 'EOF'
@@ -131,9 +129,7 @@ jobs:
             cd /home/abc/htdocs/abc
 
             echo "🔄 Pulling latest changes from Git (if any)"
-            git reset --hard
-            git clean -fd
-            git pull origin main --force
+            sudo git reset --hard origin/main && sudo git clean -fd && sudo git pull origin main
 
             echo "🗃️ Running fresh migration and seeding"
             php artisan migrate:fresh --seed --force
