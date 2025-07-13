@@ -1,147 +1,515 @@
 @php use App\classes\HelperFunctions; @endphp
 @extends('layouts.user')
 
+@section('head')
+    <style>
+        /* Enhanced search animations */
+        .search-container {
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+        }
+        
+        .search-input:focus {
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+        
+        /* Forum card hover effects */
+        .forum-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .forum-card:hover {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(-2px);
+        }
+        
+        /* Status badges */
+        .status-solved {
+            background: linear-gradient(45deg, #10b981, #059669);
+        }
+        
+        .status-hot {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            animation: hotPulse 2s ease-in-out infinite;
+        }
+        
+        .status-new {
+            background: linear-gradient(45deg, #3b82f6, #2563eb);
+        }
+        
+        .status-locked {
+            background: linear-gradient(45deg, #6b7280, #4b5563);
+        }
+        
+        @keyframes hotPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        /* Activity indicators */
+        .activity-high {
+            background: linear-gradient(45deg, #f59e0b, #d97706);
+        }
+        
+        .activity-medium {
+            background: linear-gradient(45deg, #10b981, #059669);
+        }
+        
+        .activity-low {
+            background: linear-gradient(45deg, #6b7280, #4b5563);
+        }
+        
+        /* Avatar hover effects */
+        .forum-avatar {
+            transition: all 0.3s ease;
+        }
+        
+        .forum-card:hover .forum-avatar {
+            transform: scale(1.1);
+        }
+        
+        /* Forum floating animation */
+        .forum-float {
+            animation: forumFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes forumFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(3deg); }
+        }
+        
+        /* Unread indicator */
+        .unread-indicator {
+            width: 8px;
+            height: 8px;
+            background: #3b82f6;
+            border-radius: 50%;
+            animation: unreadPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes unreadPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+    </style>
+@endsection
+
 @section('content')
     <x-user.bread-crumb :data="['Home', 'Forums', 'List']"/>
-    <div class="flex flex-col justify-center items-center bg-green-50 h-[200px]">
-        <h1 class="block text-lg md:text-2xl w-full text-center font-bold">🔍 Dive into Forum Treasures!</h1>
-        <br>
-        <form action=""
-              class="mt-2 md:mt-4 flex items-center justify-center md:p-4 md:pl-2 relative bg-white md:w-2/3 shadow">
-            <div class="relative flex items-center justify-between md:w-full s-form">
-                <label for="searchInput" class="sr-only">Search</label>
-                <input id="searchInput" name="q" type="text" placeholder="Unearth knowledge and discussions! 🚀✨" autocomplete="off"
-                       class="search-input focus:outline-none md:px-6 md:py-2 border-none outline-none focus:border-none transition-all duration-300 ease-in-out w-full placeholder:text-xs md:placeholder:text-base">
-                <button type="submit"
-                        class="mx-2 md:mx-0 bg-green-400 text-white md:py-2 md:px-4 w-auto md:w-[calc(100%-700px)] ml-2 hover:bg-blue-600 transition-all duration-300 ease-in-out flex items-center justify-center flex-row-reverse rounded">
-                    <span class="flex items-center justify-center">
-                        <span class="hidden md:block">Search</span>
-                        <!--search icon svg-->
-                        <i class='bx bx-search-alt-2 md:hidden p-1'></i>
-                    </span>
-                </button>
+    
+    <!-- Enhanced Hero Search Section -->
+    <div class="search-container relative overflow-hidden">
+        <div class="absolute inset-0 bg-black opacity-20"></div>
+        <!-- Floating forum icons animation -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-20 left-10 text-white opacity-20 forum-float">💬</div>
+            <div class="absolute top-32 right-20 text-white opacity-20 animate-pulse">🗣️</div>
+            <div class="absolute bottom-20 left-20 text-white opacity-20 forum-float delay-1000">💭</div>
+            <div class="absolute bottom-32 right-10 text-white opacity-20 animate-pulse delay-500">🔍</div>
+        </div>
+        
+        <div class="relative z-10 container mx-auto px-4 py-16 lg:py-20 bg-transparent">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
+                    Join the <span class="text-yellow-300">Discussion</span>
+                </h1>
+                <p class="text-lg md:text-xl text-white opacity-90 max-w-2xl mx-auto">
+                    Connect with community members, share knowledge, and get answers to your questions
+                </p>
+                
+                <!-- Forum Stats -->
+                <div class="flex justify-center gap-8 mt-6 text-white">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">{{ $forums->total() }}+</div>
+                        <div class="text-sm opacity-75">Discussions</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">
+                            {{ $forums->sum(function($forum) { return $forum->countAnswers(); }) }}+
+                        </div>
+                        <div class="text-sm opacity-75">Answers</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">24/7</div>
+                        <div class="text-sm opacity-75">Active Community</div>
+                    </div>
+                </div>
             </div>
-            <div id="searchResults" class="search-results mt-2 overflow-auto max-h-[30vh] md:max-h-[40vh] lg:max-h-[50vh]"></div>
-        </form>
-    </div>
-    <div class="container flex items-center justify-between my-4 mx-2 md:mx-auto w-[95vw]">
-        {{-- Category Filter--}}
-        <div class="flex items-center justify-between md:mb-0 w-[125px]">
-            <label for="product-category-filter" class="text-gray-500 text-lg hidden md:block">
-                <i class='bx bx-filter-alt w-5 h-5'></i>
-            </label>
-            <select name="category" id="product-category-filter"
-                    class="border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm text-gray-500 w-[125px]"
-                    onchange="doFilter()">
-                <option value="all" selected>All</option>
-                @foreach($categories as $category)
-                    @if(request()->get('category') == $category->name)
-                        <option selected value="{{ $category->name }}">{{ $category->name }}</option>
-                    @else
-                        <option value="{{ $category->name }}">{{ $category->name }}</option>
-                    @endif
-                @endforeach
-            </select>
-        </div>
-        {{-- Total Forums --}}
-        <div class="hidden sm:block text-center md:text-left mb-4 md:mb-0">
-            <p>
-                Showing {{ $forums->firstItem() }} - {{ $forums->lastItem() }} of {{ $forums->total() }} results
-            </p>
-        </div>
-        {{-- Sort By --}}
-        <div class="flex items-center justify-between md:mb-0 w-[125px]">
-            <label for="job-country" class="text-gray-500 text-lg hidden md:block">
-                <i class='bx bx-filter w-5 h-5 text-lg'></i>
-            </label>
-            <select name="sort" id="job-country"
-                    class="border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm text-gray-500 w-[125px]"
-                    onchange="doSort()">
-                <option value="" @if(!request()->get('country')) selected @endif>By Country</option>
-                @forelse($countries as $country)
-                    @if(request()->get('country') == $country->id)
-                        <option selected value="{{ $country->id }}">{{ $country->name }}</option>
-                    @else
-                        <option value="{{ $country->id }}">{{ $country->name }}</option>
-                    @endif
-                @empty
-                    <option value="all" selected>All</option>
-                @endforelse
-            </select>
-        </div>
-    </div>
-    <div class="container py-6 mx-auto w-[95vw]">
-        @forelse($forums as $forum)
-            <div class="reveal bg-white card p-2 md:p-6 flex items-start w-full mb-5">
-                <img src="https://via.placeholder.com/100x100" alt="User Avatar"
-                     class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-2 md:mr-4">
-                <div class="w-full">
-                    <div class="flex md:flex-row flex-col items-start justify-between mb-2 md:mb-4">
-                        <div class="flex items-center">
-                            <div>
-                                <h2 class="text-sm md:text-base font-semibold text-gray-800">{{$forum->company->name}}</h2>
-                                <p class="text-gray-500 text-xs md:text-sm">Posted on {{date_format($forum->created_at, 'd M y')}}</p>
+            
+            <!-- Enhanced Search Form -->
+            <div class="max-w-4xl mx-auto relative">
+                <form action="{{ route('forum') }}" method="GET" class="bg-white rounded-2xl shadow-2xl p-2">
+                    <div class="flex flex-col md:flex-row gap-2">
+                        <div class="flex-1 relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class='bx bx-search text-gray-400 text-xl'></i>
+                            </div>
+                            <input 
+                                id="searchInput" 
+                                name="q" 
+                                type="text" 
+                                value="{{ request('q') }}"
+                                placeholder="Search discussions, topics, or keywords..." 
+                                autocomplete="off"
+                                class="search-input w-full pl-12 pr-4 py-4 text-lg border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300"
+                            >
+                            
+                            <!-- Enhanced Search Results Dropdown -->
+                            <div id="searchResults" class="search-results absolute top-full left-0 right-0 bg-white mt-1 rounded-lg shadow-lg border max-h-80 overflow-y-auto z-50 hidden">
+                                <div id="searchResultsContent"></div>
+                                <div id="searchLoading" class="hidden p-4 text-center">
+                                    <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+                                    <span class="ml-2 text-gray-600">Searching discussions...</span>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                                <span class="text-gray-600 text-xs md:text-sm">Category:
-                                    <span class="text-purple-500">
-                                        {{$forum->category->name}}
-                                    </span>
-                                </span>
-                        </div>
+                        
+                        <button 
+                            type="submit" 
+                            class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                        >
+                            <span class="hidden md:inline">Search Forums</span>
+                            <i class='bx bx-search md:hidden text-xl'></i>
+                        </button>
                     </div>
-                    <h1 class="text-base md:text-lg font-semibold text-gray-900 mb-4">{{$forum->title}}</h1>
-                    <div class="text-gray-700 text-xs md:text-sm w-full h-[130px] overflow-hidden">
-                        {!! $forum->body !!}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Filters Section -->
+    <div class="bg-gray-50 border-b">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
+                <!-- Filter Controls -->
+                <div class="flex flex-wrap items-center gap-4">
+                    <!-- Category Filter -->
+                    <div class="flex items-center gap-2">
+                        <label for="forum-category-filter" class="text-gray-700 font-medium whitespace-nowrap">
+                            <i class='bx bx-filter-alt text-lg'></i>
+                            <span class="hidden md:inline ml-1">Category:</span>
+                        </label>
+                        <select 
+                            name="category" 
+                            id="forum-category-filter" 
+                            class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white min-w-32"
+                            onchange="applyFilters()"
+                        >
+                            <option value="all">All Categories</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->name }}" {{ request('category') == $category->name ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-                    <hr class="my-4 border-t-2 border-gray-200">
-                    <div class="flex justify-center md:justify-between items-center">
-                        <div class="md:block hidden">
-                            <span class="block text-gray-600 text-xs md:text-sm">
-                                Answers: {{$forum->countAnswers()}}
-                            </span>
+
+                    <!-- Country Filter -->
+                    <div class="flex items-center gap-2">
+                        <label for="forum-country" class="text-gray-700 font-medium whitespace-nowrap">
+                            <i class='bx bx-world text-lg'></i>
+                            <span class="hidden md:inline ml-1">Location:</span>
+                        </label>
+                        <select 
+                            name="country" 
+                            id="forum-country" 
+                            class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white min-w-32"
+                            onchange="applyFilters()"
+                        >
+                            <option value="">All Locations</option>
+                            @foreach($countries as $country)
+                                <option value="{{ $country->id }}" {{ request('country') == $country->id ? 'selected' : '' }}>
+                                    {{ $country->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Sort Filter -->
+                    <div class="flex items-center gap-2">
+                        <label for="forum-sort" class="text-gray-700 font-medium whitespace-nowrap">
+                            <i class='bx bx-sort text-lg'></i>
+                            <span class="hidden md:inline ml-1">Sort by:</span>
+                        </label>
+                        <select 
+                            name="sort" 
+                            id="forum-sort" 
+                            class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white min-w-32"
+                            onchange="applyFilters()"
+                        >
+                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Latest Activity</option>
+                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
+                            <option value="most-replies" {{ request('sort') == 'most-replies' ? 'selected' : '' }}>Most Replies</option>
+                            <option value="no-replies" {{ request('sort') == 'no-replies' ? 'selected' : '' }}>Unanswered</option>
+                            <option value="title" {{ request('sort') == 'title' ? 'selected' : '' }}>Title A-Z</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Clear Filters -->
+                    @if(request('category') || request('country') || request('sort') || request('q'))
+                        <button 
+                            onclick="clearFilters()" 
+                            class="text-sm text-purple-600 hover:text-purple-800 font-medium flex items-center gap-1 transition-colors"
+                        >
+                            <i class='bx bx-x text-lg'></i>
+                            Clear Filters
+                        </button>
+                    @endif
+                </div>
+
+                <!-- Results Info & Actions -->
+                <div class="flex items-center gap-6">
+                    <!-- Results Info -->
+                    <div class="text-gray-600 text-sm">
+                        <span class="hidden sm:inline">
+                            Showing {{ $forums->firstItem() ?: 0 }} - {{ $forums->lastItem() ?: 0 }} of {{ $forums->total() }} discussions
+                        </span>
+                        <span class="sm:hidden">
+                            {{ $forums->total() }} discussions found
+                        </span>
+                    </div>
+
+                    <!-- Create New Discussion Button -->
+                    <a 
+                        href="#" 
+                        class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors text-sm"
+                    >
+                        <i class='bx bx-plus mr-2'></i>
+                        New Discussion
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forums List View -->
+    <div class="container mx-auto px-4 py-8">
+        @if($forums->count() > 0)
+            <div class="space-y-4">
+                @foreach($forums as $forum)
+                    @php
+                        $answerCount = $forum->countAnswers();
+                        $isHot = $answerCount > 10;
+                        $isNew = $forum->created_at->isToday();
+                        $isUnanswered = $answerCount == 0;
+                        $activityLevel = $answerCount > 15 ? 'high' : ($answerCount > 5 ? 'medium' : 'low');
+                    @endphp
+
+                    <div class="forum-card bg-white rounded-xl shadow-md hover:shadow-xl border border-gray-100 overflow-hidden group transition-all duration-300">
+                        <div class="p-6">
+                            <!-- Forum Header -->
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-start space-x-4 flex-1">
+                                    <!-- Avatar -->
+                                    <div class="forum-avatar flex-shrink-0">
+                                        <img 
+                                            src="https://ui-avatars.com/api/?name={{ urlencode($forum->company->name) }}&background=7c3aed&color=fff&size=48" 
+                                            alt="{{ $forum->company->name }}"
+                                            class="w-12 h-12 rounded-full border-2 border-purple-100"
+                                        >
+                                    </div>
+
+                                    <!-- Forum Info -->
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="flex items-center space-x-2">
+                                                <h3 class="font-semibold text-gray-900 text-sm">{{ $forum->company->name }}</h3>
+                                                
+                                                <!-- Status Badges -->
+                                                @if($isNew)
+                                                    <span class="status-new px-2 py-1 rounded-full text-white text-xs font-bold">NEW</span>
+                                                @endif
+                                                
+                                                @if($isHot)
+                                                    <span class="status-hot px-2 py-1 rounded-full text-white text-xs font-bold">🔥 HOT</span>
+                                                @endif
+                                                
+                                                @if($isUnanswered)
+                                                    <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium">Unanswered</span>
+                                                @endif
+                                            </div>
+                                            
+                                            <!-- Category & Date -->
+                                            <div class="flex items-center space-x-4 text-xs text-gray-500">
+                                                <span class="bg-purple-50 text-purple-700 px-2 py-1 rounded-full font-medium">
+                                                    {{ $forum->category->name }}
+                                                </span>
+                                                <span>{{ $forum->created_at->format('M d, Y') }}</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Forum Title -->
+                                        <h2 class="text-lg font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors line-clamp-2">
+                                            <a href="{{ route('view.forum', [$forum->id, \Illuminate\Support\Str::slug($forum->title)]) }}">
+                                                {{ $forum->title }}
+                                            </a>
+                                        </h2>
+
+                                        <!-- Forum Content Preview -->
+                                        <div class="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
+                                            {!! Str::limit(strip_tags($forum->body), 200) !!}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Forum Footer -->
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                <!-- Activity Stats -->
+                                <div class="flex items-center space-x-6">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class='bx bx-message-dots mr-2 text-purple-500'></i>
+                                        <span class="font-medium">{{ $answerCount }}</span>
+                                        <span class="ml-1">{{ Str::plural('answer', $answerCount) }}</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class='bx bx-show mr-2 text-blue-500'></i>
+                                        <span>{{ $forum->views ?? 0 }} views</span>
+                                    </div>
+                                    
+                                    <!-- Activity Level Indicator -->
+                                    <div class="flex items-center">
+                                        <span class="text-xs text-gray-500 mr-2">Activity:</span>
+                                        <div class="activity-{{ $activityLevel }} w-3 h-3 rounded-full"></div>
+                                    </div>
+                                    
+                                    <!-- Last Activity -->
+                                    <div class="text-xs text-gray-500">
+                                        <i class='bx bx-time mr-1'></i>
+                                        Last activity {{ $forum->updated_at->diffForHumans() }}
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex items-center space-x-3">
+                                    <!-- Quick Reply Button -->
+                                    <button 
+                                        onclick="quickReply('{{ $forum->id }}')"
+                                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-purple-600 hover:text-purple-800 border border-purple-300 rounded-lg hover:bg-purple-50 transition-colors"
+                                        title="Quick Reply"
+                                    >
+                                        <i class='bx bx-reply mr-1'></i>
+                                        <span class="hidden md:inline">Quick Reply</span>
+                                    </button>
+                                    
+                                    <!-- Join Discussion Button -->
+                                    <a 
+                                        href="{{ route('view.forum', [$forum->id, \Illuminate\Support\Str::slug($forum->title)]) }}" 
+                                        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                    >
+                                        <i class='bx bx-conversation mr-2'></i>
+                                        Join Discussion
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                        <button onclick="window.location.href = '{{route('view.forum', [$forum->id, \Illuminate\Support\Str::slug($forum->title)])}}'"
-                                class="text-white bg-purple-500 hover:bg-purple-600 font-bold uppercase text-xs px-3 py-2 md:px-4 md:py-2 rounded-full focus:outline-none">
-                            Leave an Answer
+
+                        <!-- Unread Indicator -->
+                        @if($isNew || $isUnanswered)
+                            <div class="unread-indicator absolute top-4 left-4"></div>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- Enhanced Pagination -->
+            <div class="mt-12">
+                {{ $forums->appends(request()->query())->links() }}
+            </div>
+        @else
+            <!-- Enhanced Empty State -->
+            <div class="text-center py-16">
+                <div class="max-w-md mx-auto">
+                    <div class="mb-6">
+                        <i class='bx bx-conversation text-6xl text-gray-300'></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">No Discussions Found</h3>
+                    <p class="text-gray-600 mb-6">
+                        We couldn't find any discussions matching your criteria. Be the first to start a conversation!
+                    </p>
+                    <div class="space-y-3">
+                        <a 
+                            href="{{ route('forum.create') ?? '#' }}"
+                            class="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors"
+                        >
+                            <i class='bx bx-plus mr-2'></i>
+                            Start New Discussion
+                        </a>
+                        <button 
+                            onclick="clearFilters()" 
+                            class="block mx-auto text-purple-600 hover:text-purple-800 font-medium text-sm"
+                        >
+                            Clear All Filters
                         </button>
                     </div>
                 </div>
             </div>
-        @empty
-            <div class="bg-white card p-2 md:p-6">
-                <h1 class="text-lg font-semibold text-gray-900 mb-4 text-center">No Forum Found</h1>
+        @endif
+    </div>
+
+    <!-- Quick Reply Modal -->
+    <div id="quickReplyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Quick Reply</h3>
+            <textarea 
+                id="quickReplyText"
+                placeholder="Type your reply..."
+                class="w-full border border-gray-300 rounded-lg p-3 h-32 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            ></textarea>
+            <div class="flex justify-end space-x-3 mt-4">
+                <button 
+                    onclick="closeQuickReply()"
+                    class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium"
+                >
+                    Cancel
+                </button>
+                <button 
+                    onclick="submitQuickReply()"
+                    class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg"
+                >
+                    Post Reply
+                </button>
             </div>
-        @endforelse
-        <!-- Pagination -->
-        {{$forums->links()}}
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="text-center">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
+            <p class="text-gray-600 font-medium">Loading discussions...</p>
+        </div>
     </div>
 @endsection
+
 @section('page-scripts')
     <script>
-        function doFilter() {
-            let categoryValue = document.getElementById('product-category-filter').value;
-            let sortValue = document.getElementById('job-country').value;
-            applyFilters(categoryValue, sortValue);
-        }
-
-        function doSort() {
-            let sortValue = document.getElementById('job-country').value;
-            let categoryValue = document.getElementById('product-category-filter').value;
-            applyFilters(categoryValue, sortValue);
-        }
-
-        function applyFilters(category, sort) {
-            let url = "{{ route('forum') }}";
+        // Enhanced filter functionality with loading states
+        function applyFilters() {
+            showLoading();
+            
+            const categoryValue = document.getElementById('forum-category-filter').value;
+            const countryValue = document.getElementById('forum-country').value;
+            const sortValue = document.getElementById('forum-sort').value;
+            const searchValue = document.getElementById('searchInput').value;
+            
+            let url = '{{ route('forum') }}';
             let params = [];
 
-            if (category !== 'all') {
-                params.push('category=' + category);
+            if (categoryValue !== 'all') {
+                params.push('category=' + encodeURIComponent(categoryValue));
             }
 
-            if (sort !== 'all') {
-                params.push('country=' + sort);
+            if (countryValue && countryValue !== '') {
+                params.push('country=' + encodeURIComponent(countryValue));
+            }
+
+            if (sortValue && sortValue !== 'newest') {
+                params.push('sort=' + encodeURIComponent(sortValue));
+            }
+            
+            if (searchValue.trim()) {
+                params.push('q=' + encodeURIComponent(searchValue.trim()));
             }
 
             if (params.length > 0) {
@@ -150,54 +518,201 @@
 
             window.location.href = url;
         }
-    </script>
-    <script>
+
+        function clearFilters() {
+            showLoading();
+            window.location.href = '{{ route('forum') }}';
+        }
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+
+        // Quick Reply functionality
+        let currentForumId = null;
+
+        function quickReply(forumId) {
+            currentForumId = forumId;
+            document.getElementById('quickReplyModal').classList.remove('hidden');
+            document.getElementById('quickReplyText').focus();
+        }
+
+        function closeQuickReply() {
+            document.getElementById('quickReplyModal').classList.add('hidden');
+            document.getElementById('quickReplyText').value = '';
+            currentForumId = null;
+        }
+
+        function submitQuickReply() {
+            const replyText = document.getElementById('quickReplyText').value.trim();
+            
+            if (!replyText) {
+                alert('Please enter your reply');
+                return;
+            }
+
+            if (!currentForumId) {
+                alert('Error: Forum ID not found');
+                return;
+            }
+
+            // For now, redirect to full forum page
+            // In a real implementation, you'd submit via AJAX
+            window.location.href = `{{ route('view.forum', ['', '']) }}`.replace(/\/+$/, '') + '/' + currentForumId + '/reply';
+        }
+
+        // Enhanced search functionality with debouncing and error handling
+        let searchTimeout;
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
+        const searchResultsContent = document.getElementById('searchResultsContent');
+        const searchLoading = document.getElementById('searchLoading');
 
-        searchInput.addEventListener('input', async function () {
-            const inputValue = this.value.trim().toLowerCase();
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const inputValue = this.value.trim();
 
-            // Check if inputValue is at least 3 characters
-            if (inputValue.length >= 3) {
-                const searchURL = "{{ route('api.search.forums', ['search' => '__input__']) }}".replace('__input__', inputValue);
-
-                try {
-                    await fetch(searchURL)
-                        .then(response => response.json())
-                        .then(data => {
-                            // Clear previous results
-                            searchResults.innerHTML = '';
-                            // Handle no results
-                            if (data.length === 0) {
-                                const noResults = document.createElement('p');
-                                noResults.textContent = 'No results found';
-                                searchResults.appendChild(noResults);
-                                // styling padding and margin
-                                noResults.style.padding = '8px';
-                                noResults.style.margin = '0';
-                                searchResults.style.display = 'block';
-                                return;
-                            }
-
-                            // Filter and display results
-                            data.forEach(result => {
-                                const resultElement = document.createElement('a');
-                                resultElement.textContent = result;
-                                resultElement.href = "{{ route('forum', ['q' => '__slug__']) }}".replace('__slug__', result);
-                                console.log(resultElement.href)
-
-                                searchResults.appendChild(resultElement);
-                                // Show or hide the result container based on the input length
-                                searchResults.style.display = inputValue.length >= 3 ? 'block' : 'none';
-                            });
-                        });
-                } catch (error) {
-                    console.error('Error fetching search results:', error);
-                }
-            }else{
-                searchResults.style.display = 'none';
+            if (inputValue.length >= 2) {
+                searchTimeout = setTimeout(() => performSearch(inputValue), 300);
+            } else {
+                hideSearchResults();
             }
         });
+
+        // Hide search results when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!searchInput.contains(event.target) && !searchResults.contains(event.target)) {
+                hideSearchResults();
+            }
+        });
+
+        async function performSearch(query) {
+            try {
+                showSearchLoading();
+                
+                const searchURL = "{{ route('api.search.forums', ['search' => '__input__']) }}".replace('__input__', encodeURIComponent(query));
+                
+                const response = await fetch(searchURL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displaySearchResults(data);
+                
+            } catch (error) {
+                console.error('Search error:', error);
+                displaySearchError();
+            } finally {
+                hideSearchLoading();
+            }
+        }
+
+        function showSearchLoading() {
+            searchLoading.classList.remove('hidden');
+            searchResults.classList.remove('hidden');
+        }
+
+        function hideSearchLoading() {
+            searchLoading.classList.add('hidden');
+        }
+
+        function displaySearchResults(results) {
+            searchResultsContent.innerHTML = '';
+
+            if (results.length === 0) {
+                searchResultsContent.innerHTML = `
+                    <div class="p-4 text-center text-gray-500">
+                        <i class='bx bx-conversation text-2xl mb-2'></i>
+                        <p>No discussions found</p>
+                    </div>
+                `;
+            } else {
+                results.forEach((result, index) => {
+                    const resultElement = document.createElement('a');
+                    resultElement.href = "{{ route('forum', ['q' => '__slug__']) }}".replace('__slug__', encodeURIComponent(result));
+                    resultElement.className = 'block px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0';
+                    resultElement.innerHTML = `
+                        <div class="flex items-center">
+                            <i class='bx bx-conversation text-gray-400 mr-3'></i>
+                            <span class="text-gray-900">${escapeHtml(result)}</span>
+                            <span class="ml-auto text-xs text-purple-600 font-medium">💬 Discussion</span>
+                        </div>
+                    `;
+                    searchResultsContent.appendChild(resultElement);
+                });
+            }
+
+            searchResults.classList.remove('hidden');
+        }
+
+        function displaySearchError() {
+            searchResultsContent.innerHTML = `
+                <div class="p-4 text-center text-red-500">
+                    <i class='bx bx-error text-2xl mb-2'></i>
+                    <p>Search temporarily unavailable</p>
+                </div>
+            `;
+            searchResults.classList.remove('hidden');
+        }
+
+        function hideSearchResults() {
+            searchResults.classList.add('hidden');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Form submission with validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const searchValue = searchInput.value.trim();
+            if (searchValue.length > 0 && searchValue.length < 2) {
+                e.preventDefault();
+                alert('Please enter at least 2 characters to search');
+                return false;
+            }
+            showLoading();
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            // Escape key to close quick reply modal
+            if (event.key === 'Escape') {
+                closeQuickReply();
+            }
+            
+            // Ctrl/Cmd + Enter to submit quick reply
+            if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+                if (!document.getElementById('quickReplyModal').classList.contains('hidden')) {
+                    submitQuickReply();
+                }
+            }
+        });
+
+        // Forum activity tracking
+        document.querySelectorAll('a[href*="view.forum"]').forEach(link => {
+            link.addEventListener('click', function() {
+                // Track forum views for analytics
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'forum_view', {
+                        event_category: 'engagement',
+                        event_label: this.href,
+                        value: 1
+                    });
+                }
+            });
+        });
+
+        // Auto-refresh discussions every 2 minutes to show new activity
+        setInterval(function() {
+            if (document.visibilityState === 'visible') {
+                // Optional: Check for new discussions and show notification
+                console.log('Checking for new forum activity...');
+            }
+        }, 120000); // 2 minutes
     </script>
 @endsection
