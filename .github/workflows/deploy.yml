@@ -3,10 +3,14 @@ name: Deploy Admin Panel
 on:
   push:
     branches: [main]
+  schedule:
+    # Run daily at 2:00 AM UTC (adjust time as needed)
+    - cron: '0 2 * * *'
 
 jobs:
   deploy-api:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       - name: Deploy Laravel API via SSH
         uses: appleboy/ssh-action@master
@@ -109,3 +113,37 @@ jobs:
             php artisan queue:restart || true
 
             echo "✅ Laravel API deployment complete!"
+
+  daily-database-reset:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - name: Reset Database Daily
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "🗓️ Starting daily database reset for dummy site"
+            echo "📁 Navigating to Laravel API directory"
+            cd /home/abc/htdocs/abc
+
+            echo "🔄 Pulling latest changes from Git (if any)"
+            git pull origin main
+
+            echo "🗃️ Running fresh migration and seeding"
+            php artisan migrate:fresh --seed --force
+
+            echo "🔑 Setting storage permissions"
+            sudo chown -R ubuntu:www-data storage bootstrap/cache
+            sudo chmod -R 775 storage bootstrap/cache
+            chmod -R 777 storage
+
+            echo "⚙️ Clearing and rebuilding caches"
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan optimize
+
+            echo "✅ Daily database reset complete! Site is ready for fresh testing."
