@@ -39,7 +39,7 @@ return new class extends Migration
 
         // Create new admin user
         DB::table('users')->insert([
-            'name' => 'HkDevelopers',
+            'name' => 'Admin',
             'email' => 'admin@mail.com',
             'email_verified_at' => now(),
             'password' => Hash::make('admin'),
