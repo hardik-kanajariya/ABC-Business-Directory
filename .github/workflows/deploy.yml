@@ -24,15 +24,18 @@ jobs:
             echo "📁 Navigating to Laravel API directory"
             cd /home/abc/htdocs/abc
 
+            echo "🔄 ON Maintenance Mode"
+            php artisan down
+
             echo "🔄 Pulling latest changes from Git"
             sudo git reset --hard origin/main && sudo git clean -fd && sudo git pull origin main
 
             echo "🔧 Creating .env file"
             cat > .env << 'EOF'
             APP_NAME=${{ secrets.APP_NAME }}
-            APP_ENV=local
+            APP_ENV=prod
             APP_KEY=
-            APP_DEBUG=true
+            APP_DEBUG=false
             APP_URL=${{ secrets.APP_URL }}
 
             LOG_CHANNEL=stack
@@ -111,6 +114,9 @@ jobs:
             echo "🧹 Clearing old caches"
             php artisan queue:restart || true
 
+            echo "🔄 OFF Maintenance Mode"
+            php artisan up
+
             echo "✅ Laravel API deployment complete!"
 
   daily-database-reset:
@@ -128,6 +134,9 @@ jobs:
             echo "📁 Navigating to Laravel API directory"
             cd /home/abc/htdocs/abc
 
+            echo "🔄 ON Maintenance Mode"
+            php artisan down
+
             echo "🔄 Pulling latest changes from Git (if any)"
             sudo git reset --hard origin/main && sudo git clean -fd && sudo git pull origin main
 
@@ -143,5 +152,8 @@ jobs:
             php artisan config:cache
             php artisan view:cache
             php artisan optimize
+
+            echo "🔄 OFF Maintenance Mode"
+            php artisan up
 
             echo "✅ Daily database reset complete! Site is ready for fresh testing."
