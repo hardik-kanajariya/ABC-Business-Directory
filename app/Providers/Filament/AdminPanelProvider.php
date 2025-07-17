@@ -24,9 +24,17 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Joaopaulolndev\FilamentGeneralSettings\FilamentGeneralSettingsPlugin;
 use Njxqlus\FilamentProgressbar\FilamentProgressbarPlugin;
 use Tapp\FilamentMailLog\FilamentMailLogPlugin;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\Css;
 
 class AdminPanelProvider extends PanelProvider
 {
+    public function boot(): void
+{
+    FilamentAsset::register([
+        Css::make('dashboard-widgets', resource_path('css/dashboard-widgets.css')),
+    ]);
+}
     public function panel(Panel $panel): Panel
     {
         return $panel
